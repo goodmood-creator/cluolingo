@@ -36,14 +36,14 @@ AI  ▸ English version
 ### As a Claude Code plugin (recommended)
 
 ```
-/plugin marketplace add sai/cluolingo
+/plugin marketplace add goodmood-creator/cluolingo
 /plugin install cluolingo@cluolingo
 ```
 
 ### Global (manual) install
 
 ```
-git clone https://github.com/sai/cluolingo.git
+git clone https://github.com/goodmood-creator/cluolingo.git
 cd cluolingo
 ./install.sh
 ```
