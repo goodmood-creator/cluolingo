@@ -2,6 +2,8 @@
 
 > **Claude × Duolingo** — practice a language while your AI does the work. A **non-blocking** companion for [Claude Code](https://claude.com/claude-code).
 
+**English** · [繁體中文](README.zh-TW.md) · [日本語](README.ja.md)
+
 Inspired by [workout-gate](https://github.com/BotchetDig/workout-gate), but with one deliberate inversion: **it never blocks you.**
 
 - **workout-gate** freezes your prompt until you do push-ups in front of a webcam. A hard gate.
@@ -18,7 +20,7 @@ A `UserPromptSubmit` hook injects behavioral context on every prompt. For a subs
 3. **Slip in a "btw"** — one casual fill-in-the-blank or multiple-choice question drawn from the rewrite.
 4. **Never wait.** When the background task reports back, the result is surfaced regardless of the question. The aside is optional practice, not a gate.
 
-When you answer, Claude grades it warmly and updates your scoreboard via the `cluo` CLI.
+When you answer, your scoreboard updates via the `cluo` CLI.
 
 ```
 You ▸ 幫我把這個列表加上分頁
@@ -28,8 +30,17 @@ AI  ▸ English version
       🔧 Kicked off the pagination work in the background.
       btw, while that runs — quick one:
         the act of splitting a list into pages is called p_________?
-      (answer whenever; I'll drop the code in as soon as it's ready)
+      (answer with `! btw answer pagination`, or just reply — code drops in when ready)
 ```
+
+## Answering without disrupting your flow
+
+Two ways to answer — pick per moment:
+
+- **Out-of-band (recommended, zero disruption):** `! btw answer pagination`. The `!` shell prefix costs zero tokens and never enters the conversation, so it doesn't pollute your main task. The CLI checks the answer and updates your streak instantly.
+- **In chat (when you want the explanation):** just reply `pagination`. Claude grades it warmly with a one-line explanation. Slightly more context, but you learn more.
+
+`btw` and `cluo` are the **same command** — use whichever reads better (`! btw answer …`, `! cluo stats`).
 
 ## Install
 
@@ -48,17 +59,18 @@ cd cluolingo
 ./install.sh
 ```
 
-This links the `cluo` CLI onto your PATH and wires the hook into `~/.claude/settings.json`. Re-run any time; uninstall with `./install.sh --uninstall`.
+This links the `cluo` + `btw` CLI onto your PATH and wires the hook into `~/.claude/settings.json`. Re-run any time; uninstall with `./install.sh --uninstall`.
 
 > Requires [`jq`](https://jqlang.github.io/jq/) (`brew install jq`).
 
-## The `cluo` CLI
+## The CLI (`cluo` / `btw`)
 
-Run with the zero-token `!` shell prefix inside Claude Code, e.g. `! cluo stats`.
+Run with the zero-token `!` shell prefix inside Claude Code, e.g. `! btw stats`.
 
 | Command | Effect |
 |---|---|
-| `cluo stats` | Show scoreboard (language, accuracy, streak, words learned) |
+| `btw stats` | Show scoreboard (language, accuracy, streak, words learned) |
+| `btw answer <answer>` | Answer the pending question out-of-band (scored instantly) |
 | `cluo lang <language>` | Set the target practice language (e.g. `cluo lang Japanese`) |
 | `cluo native <language>` | Set your native language (default Chinese) |
 | `cluo on` / `cluo off` | Enable / disable the companion |
@@ -67,7 +79,7 @@ Run with the zero-token `!` shell prefix inside Claude Code, e.g. `! cluo stats`
 | `cluo set freq <N>` | In `freq` mode, ask every N prompts |
 | `cluo set chance <0-100>` | In `chance` mode, % probability per prompt |
 | `cluo reset` | Reset the scoreboard (keeps settings) |
-| `cluo grade correct\|wrong` · `cluo word <text>` | Called by Claude during grading |
+| `cluo ask <answer> [explanation]` · `cluo grade correct\|wrong` · `cluo word <text>` | Called by Claude when posing/grading a question |
 
 ## Languages
 

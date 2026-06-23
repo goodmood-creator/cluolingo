@@ -24,13 +24,18 @@ if [ ! -f "$STATE_FILE" ]; then
 { "enabled": true, "mode": "every", "freq": 5, "chance": 30,
   "target_lang": "English", "native_lang": "Chinese",
   "prompt_count": 0, "quiz_count": 0, "correct": 0,
-  "streak": 0, "best_streak": 0, "words_seen": [] }
+  "streak": 0, "best_streak": 0, "pending": null, "words_seen": [] }
 JSON
 fi
 
 _save() { # _save [jq-args...] '<filter>'  — all args forwarded to jq, then the state file
   local tmp; tmp="$(mktemp "$STATE_DIR/.state.XXXXXX")"
   jq "$@" "$STATE_FILE" > "$tmp" && mv "$tmp" "$STATE_FILE"
+}
+
+_norm() { # normalize an answer for comparison: lowercase, trim, strip surrounding punctuation
+  printf '%s' "$1" | tr '[:upper:]' '[:lower:]' \
+    | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//; s/^[^[:alnum:]]+//; s/[^[:alnum:]]+$//'
 }
 
 cmd="${1:-stats}"; shift || true
@@ -72,6 +77,27 @@ case "$cmd" in
     _save --arg w "$w" '.words_seen = ((.words_seen + [$w]) | unique)'
     echo "📒 logged: $w"
     ;;
+  ask)
+    # Claude registers the pending question so the user can answer out-of-band.
+    a="${1:-}"; e="${2:-}"
+    [ -n "$a" ] || { echo "usage: cluo ask <correct_answer> [explanation]"; exit 1; }
+    _save --arg a "$a" --arg e "$e" '.pending = {answer:$a, explain:$e}'
+    echo "📌 question registered — answer with:  btw answer <your answer>"
+    ;;
+  answer)
+    u="${*:-}"; [ -n "$u" ] || { echo "usage: btw answer <your answer>"; exit 1; }
+    pa="$(jq -r '.pending.answer // empty' "$STATE_FILE")"
+    [ -n "$pa" ] || { echo "🤔 no pending question right now"; exit 0; }
+    pe="$(jq -r '.pending.explain // empty' "$STATE_FILE")"
+    if [ "$(_norm "$u")" = "$(_norm "$pa")" ]; then
+      _save '.quiz_count+=1 | .correct+=1 | .streak+=1 | .best_streak=([.best_streak,.streak]|max) | .pending=null'
+      echo "✅ correct!  (streak: $(jq -r .streak "$STATE_FILE"))"
+    else
+      _save '.quiz_count+=1 | .streak=0 | .pending=null'
+      echo "❌ not quite — the answer was: $pa"
+    fi
+    [ -n "$pe" ] && echo "   💡 $pe"
+    ;;
   preset)
     case "${1:-}" in
       chill)    _save '.mode="chance" | .chance=20' ; echo "preset: chill (20% chance)" ;;
@@ -93,5 +119,5 @@ case "$cmd" in
     _save '.prompt_count=0 | .quiz_count=0 | .correct=0 | .streak=0 | .best_streak=0 | .words_seen=[]'
     echo "scoreboard reset"
     ;;
-  *) echo "cluo: unknown command '$cmd' (try: stats, on, off, lang, native, grade, word, preset, set, reset)"; exit 1 ;;
+  *) echo "cluo: unknown command '$cmd' (try: stats, on, off, lang, native, ask, answer, grade, word, preset, set, reset)"; exit 1 ;;
 esac

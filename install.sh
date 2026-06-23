@@ -27,14 +27,15 @@ if [ "${1:-}" = "--uninstall" ]; then
       .hooks.UserPromptSubmit |= ( map( .hooks |= map(select(.command | test("/cluolingo.sh") | not)) )
                                    | map(select(.hooks | length > 0)) )
     else . end'
-  rm -f "$BIN_DIR/cluo"
-  echo "✅ cluolingo uninstalled (settings hook + cluo symlink removed). State in $CONFIG_DIR/cluolingo kept."
+  rm -f "$BIN_DIR/cluo" "$BIN_DIR/btw"
+  echo "✅ cluolingo uninstalled (settings hook + cluo/btw symlinks removed). State in $CONFIG_DIR/cluolingo kept."
   exit 0
 fi
 
-# --- link the cluo CLI onto PATH ---
+# --- link the CLI onto PATH (both `cluo` and the friendly `btw` alias) ---
 ln -sf "$CLI" "$BIN_DIR/cluo"
-echo "🔗 linked cluo -> $BIN_DIR/cluo"
+ln -sf "$CLI" "$BIN_DIR/btw"
+echo "🔗 linked cluo + btw -> $BIN_DIR/"
 case ":$PATH:" in
   *":$BIN_DIR:"*) ;;
   *) echo "⚠️  $BIN_DIR is not on your PATH. Add to your shell rc:  export PATH=\"\$HOME/.local/bin:\$PATH\"" ;;
