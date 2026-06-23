@@ -59,7 +59,7 @@ cd cluolingo
 ./install.sh
 ```
 
-这会把 `cluo` CLI 链接到你的 PATH,并把 hook 写进 `~/.claude/settings.json`。随时可重跑;卸载用 `./install.sh --uninstall`。
+这会把 `cluo` CLI 链接到你的 PATH,装上 `/btw` slash 指令,并把 hook 写进 `~/.claude/settings.json`。随时可重跑;卸载用 `./install.sh --uninstall`。
 
 > 需要 [`jq`](https://jqlang.github.io/jq/)(`brew install jq`)。
 

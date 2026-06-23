@@ -59,7 +59,7 @@ cd cluolingo
 ./install.sh
 ```
 
-`cluo` CLI를 PATH에 링크하고, 훅을 `~/.claude/settings.json`에 연결합니다. 언제든 다시 실행 가능하며, 제거는 `./install.sh --uninstall`.
+`cluo` CLI를 PATH에 링크하고, `/btw` 슬래시 명령어를 설치하고, 훅을 `~/.claude/settings.json`에 연결합니다. 언제든 다시 실행 가능하며, 제거는 `./install.sh --uninstall`.
 
 > [`jq`](https://jqlang.github.io/jq/)가 필요합니다(`brew install jq`).
 

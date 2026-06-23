@@ -59,7 +59,7 @@ cd cluolingo
 ./install.sh
 ```
 
-`cluo` CLI を PATH にリンクし、フックを `~/.claude/settings.json` に組み込みます。いつでも再実行可能。アンインストールは `./install.sh --uninstall`。
+`cluo` CLI を PATH にリンクし、`/btw` スラッシュコマンドをインストールし、フックを `~/.claude/settings.json` に組み込みます。いつでも再実行可能。アンインストールは `./install.sh --uninstall`。
 
 > [`jq`](https://jqlang.github.io/jq/) が必要です（`brew install jq`）。
 

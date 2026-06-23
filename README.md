@@ -59,7 +59,7 @@ cd cluolingo
 ./install.sh
 ```
 
-This links the `cluo` CLI onto your PATH and wires the hook into `~/.claude/settings.json`. Re-run any time; uninstall with `./install.sh --uninstall`.
+This links the `cluo` CLI onto your PATH, installs the `/btw` slash command, and wires the hook into `~/.claude/settings.json`. Re-run any time; uninstall with `./install.sh --uninstall`.
 
 > Requires [`jq`](https://jqlang.github.io/jq/) (`brew install jq`).
 

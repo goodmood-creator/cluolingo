@@ -59,7 +59,7 @@ cd cluolingo
 ./install.sh
 ```
 
-Isso vincula a CLI `cluo` ao seu PATH e conecta o hook ao `~/.claude/settings.json`. Reexecute quando quiser; desinstale com `./install.sh --uninstall`.
+Isso vincula a CLI `cluo` ao seu PATH, instala o comando de barra `/btw` e conecta o hook ao `~/.claude/settings.json`. Reexecute quando quiser; desinstale com `./install.sh --uninstall`.
 
 > Requer [`jq`](https://jqlang.github.io/jq/) (`brew install jq`).
 
