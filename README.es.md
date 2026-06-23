@@ -31,6 +31,10 @@ IA ▸ English version
      (responde con `! cluo answer pagination` o simplemente contesta —— el código llega cuando esté listo)
 ```
 
+## Extra: la reescritura es un chequeo de comprensión gratis
+
+Lanzas un prompt rápido y a medio formar; antes de ponerse a trabajar, Cluolingo te devuelve una reescritura pulida en el idioma que practicas. Si lees lo suficiente, esa reescritura te muestra al instante **si la IA entendió de verdad tu petición** —— así detectas un malentendido temprano, antes de que se lance a construir lo que no era. La reescritura hace doble trabajo: práctica de idioma **y** un espejo de la comprensión de la IA.
+
 ## Responder sin interrumpir tu flujo
 
 Tres formas —— todas dan el veredicto + la respuesta correcta; difieren en la *explicación* y en si *puntúan*:

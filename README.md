@@ -31,6 +31,10 @@ AI  ▸ English version
       (answer with `! cluo answer pagination` or just reply — code drops in when ready)
 ```
 
+## Bonus: the rewrite is a free comprehension check
+
+You fire off a quick, half-formed prompt; before doing the work, Cluolingo echoes back a polished rewrite of it in your target language. If your reading is decent, that rewrite instantly shows you **whether the AI actually understood your request** — so you catch a misread early, before it runs off and builds the wrong thing. The rewrite does double duty: language practice **and** a mirror on the AI's comprehension.
+
 ## Answering without disrupting your flow
 
 Three ways to answer — all give the verdict + the correct answer; they differ in the *explanation* and whether they *score*:

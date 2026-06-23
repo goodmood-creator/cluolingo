@@ -31,6 +31,10 @@ IA   ▸ English version
        (responda com `! cluo answer pagination` ou apenas responda —— o código chega quando estiver pronto)
 ```
 
+## Bônus: a reescrita é um teste de compreensão grátis
+
+Você dispara um prompt rápido e meio cru; antes de começar o trabalho, o Cluolingo devolve uma reescrita polida no idioma que você pratica. Se você lê o bastante, essa reescrita mostra na hora **se a IA entendeu mesmo o seu pedido** —— assim você pega um mal-entendido cedo, antes de ela sair construindo a coisa errada. A reescrita faz dois papéis: prática do idioma **e** um espelho da compreensão da IA.
+
 ## Responder sem atrapalhar seu fluxo
 
 Três formas —— todas dão o veredito + a resposta certa; diferem na *explicação* e em se *pontuam*:
