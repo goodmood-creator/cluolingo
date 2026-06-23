@@ -29,18 +29,18 @@ AI  ▸ English version
       🔧 已把分页的工作丢到后台跑。
       btw,趁它在跑 —— 顺便问一句:
         把列表切成一页页的动作,英文叫 p_________?
-      (用 `/btw pagination` 回答,或 `! cluo answer pagination`,或直接打字 —— 代码好了就贴上)
+      (用 `! cluo answer pagination` 回答,或直接打字 —— 代码好了就贴上)
 ```
 
 ## 怎么答题最不扰主流程
 
 三种方式,看当下心情挑:
 
-- **`/btw pagination`(好记):** slash 指令。Claude 帮你对答案、更新连胜,并给一行讲解。`/` 选单看得到;会经过对话,算一点点 token。
 - **`! cluo answer pagination`(零干扰):** `!` 开头的 shell 命令在本地跑,**零 token、根本不进对话**,所以不会污染你的主任务。CLI 当场对答案。
 - **直接在聊天回 `pagination`:** Claude 会温和批改 + 一行讲解。多一点点 context,但学得更多。
+- **Claude Code 内建的 `/btw pagination`:** 把答案当 side note 丢出去,主任务继续跑 —— Claude 读到后帮你批改。(这是 Claude Code 自己的指令,不属于 Cluolingo。)
 
-`/btw` 是答题用的 slash 指令捷径;`cluo` 是完整 CLI —— 用 `!` 前缀跑(例 `! cluo stats`)。
+`cluo` 是完整 CLI —— 用 `!` 前缀跑(例 `! cluo stats`)。
 
 ## 安装
 
@@ -59,17 +59,17 @@ cd cluolingo
 ./install.sh
 ```
 
-这会把 `cluo` CLI 链接到你的 PATH,装上 `/btw` slash 指令,并把 hook 写进 `~/.claude/settings.json`。随时可重跑;卸载用 `./install.sh --uninstall`。
+这会把 `cluo` CLI 链接到你的 PATH,并把 hook 写进 `~/.claude/settings.json`。随时可重跑;卸载用 `./install.sh --uninstall`。
 
 > 需要 [`jq`](https://jqlang.github.io/jq/)(`brew install jq`)。
 
 ## CLI 命令(`cluo`)
 
-在 Claude Code 里用零 token 的 `!` 前缀执行,例如 `! cluo stats`。(答题用上面的 `/btw` slash 指令通常更方便。)
+在 Claude Code 里用零 token 的 `!` 前缀执行,例如 `! cluo stats`。
 
 | 命令 | 作用 |
 |---|---|
-| `cluo answer <答案>` | 回答**最近一题**待答题目(`/btw <答案>` slash 指令效果相同) |
+| `cluo answer <答案>` | 回答**最近一题**待答题目(当场计分) |
 | `cluo pending` | 列出未答的题目 |
 | `cluo stats` | 显示记分板(语言、正确率、连胜、学过的词) |
 | `cluo lang <语言>` | 设置目标练习语言(例 `cluo lang Japanese`) |

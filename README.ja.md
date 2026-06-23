@@ -29,18 +29,18 @@ AI     ▸ English version
          🔧 ページング処理をバックグラウンドで開始しました。
          btw、動いてる間にひとつ：
            リストをページに分ける動作は英語で p_________？
-         (`/btw pagination` で回答、または `! cluo answer pagination`、もしくは普通に返信 —— コードは準備でき次第貼ります)
+         (`! cluo answer pagination` で回答、または普通に返信 —— コードは準備でき次第貼ります)
 ```
 
 ## メインの流れを邪魔しない回答方法
 
 3 通り、その時の気分で選べます：
 
-- **`/btw pagination`（手軽）：** スラッシュコマンド。Claude が採点し、連勝を更新し、一言の解説を添えます。`/` メニューから見つけられます。会話を経由するため、少しだけコストがかかります。
 - **`! cluo answer pagination`（ゼロ干渉）：** `!` シェル接頭辞はローカルで実行され、トークンを消費せず会話にも入らないため、メインのタスクを汚しません。CLI が即座に採点します。
 - **チャットで `pagination` と返信：** Claude が一言の解説つきで温かく採点します。少しだけコンテキストを使いますが、学びは深いです。
+- **Claude Code 内蔵の `/btw pagination`：** 回答をサイドノートとして送り、タスクは走り続けます —— Claude が読み取って採点します。（これは Claude Code 自身のコマンドで、Cluolingo の一部ではありません。）
 
-`/btw` は回答用のスラッシュコマンドのショートカット、`cluo` は完全な CLI —— `!` 接頭辞で実行します（例：`! cluo stats`）。
+`cluo` は完全な CLI —— `!` 接頭辞で実行します（例：`! cluo stats`）。
 
 ## インストール
 
@@ -59,17 +59,17 @@ cd cluolingo
 ./install.sh
 ```
 
-`cluo` CLI を PATH にリンクし、`/btw` スラッシュコマンドをインストールし、フックを `~/.claude/settings.json` に組み込みます。いつでも再実行可能。アンインストールは `./install.sh --uninstall`。
+`cluo` CLI を PATH にリンクし、フックを `~/.claude/settings.json` に組み込みます。いつでも再実行可能。アンインストールは `./install.sh --uninstall`。
 
 > [`jq`](https://jqlang.github.io/jq/) が必要です（`brew install jq`）。
 
 ## CLI コマンド（`cluo`）
 
-Claude Code 内でトークン消費ゼロの `!` 接頭辞で実行します（例：`! cluo stats`）。（問題への回答は、上の `/btw` スラッシュコマンドの方がたいてい簡単です。）
+Claude Code 内でトークン消費ゼロの `!` 接頭辞で実行します（例：`! cluo stats`）。
 
 | コマンド | 効果 |
 |---|---|
-| `cluo answer <答え>` | **最新の**保留中の問題に回答（`/btw <答え>` スラッシュコマンドも同じ動作） |
+| `cluo answer <答え>` | **最新の**保留中の問題に回答（即採点） |
 | `cluo pending` | 未回答の問題を一覧表示 |
 | `cluo stats` | スコアボード表示（言語・正解率・連勝・覚えた単語） |
 | `cluo lang <言語>` | 練習するターゲット言語を設定（例 `cluo lang Japanese`） |
