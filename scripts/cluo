@@ -40,7 +40,7 @@ _norm() { # normalize an answer for comparison: lowercase, trim, strip surroundi
 
 cmd="${1:-stats}"; shift || true
 case "$cmd" in
-  stats)
+  stats|state)
     jq -r '
       "🦉 Cluolingo — scoreboard",
       "  status   : \(if .enabled then "on" else "off" end)  (mode: \(.mode))",
@@ -142,7 +142,7 @@ case "$cmd" in
     cat <<'USAGE'
 cluo :: Cluolingo control + scoreboard CLI
 Usage: cluo <command> [args]
-  stats                    show scoreboard
+  stats | state            show scoreboard
   on | off                 enable / disable the companion
   lang <language>          set the target practice language (e.g. cluo lang Japanese)
   native <language>        set your native language (default Chinese)

@@ -26,9 +26,8 @@ Você ▸ 幫我把這個列表加上分頁
 IA   ▸ English version
          Rewrite: "Add pagination to this list for me."
          Notes: 分頁 → pagination (não "paging")…
+       🦉 btw — uma rapidinha: o ato de dividir uma lista em páginas se chama p_________?
        🔧 Comecei o trabalho de paginação em segundo plano.
-       btw, enquanto roda —— uma rapidinha:
-         o ato de dividir uma lista em páginas se chama p_________?
        (responda com `! cluo answer pagination` ou apenas responda —— o código chega quando estiver pronto)
 ```
 

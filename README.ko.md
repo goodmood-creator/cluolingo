@@ -26,9 +26,8 @@ Cluolingo는 실제 작업을 **백그라운드 에이전트**에 넘기고, 그
 AI   ▸ English version
          Rewrite: "Add pagination to this list for me."
          Notes: 分頁 → pagination ("paging"이 아님)…
+       🦉 btw — 리스트를 페이지로 나누는 동작을 영어로 p_________?
        🔧 페이지네이션 작업을 백그라운드에서 시작했습니다.
-       btw, 돌아가는 동안 하나:
-         리스트를 페이지로 나누는 동작을 영어로 p_________?
        (`! cluo answer pagination`으로 답하거나, 그냥 답장 —— 코드는 준비되면 붙여드립니다)
 ```
 
