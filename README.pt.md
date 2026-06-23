@@ -4,10 +4,9 @@
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · **Português**
 
-Inspirado no [workout-gate](https://github.com/BotchetDig/workout-gate), mas com uma inversão deliberada: **ele nunca te bloqueia.**
+Um princípio de design deliberado: **ele nunca te bloqueia.**
 
-- **workout-gate** congela seu prompt até você fazer flexões na frente da webcam. Um portão rígido.
-- **Cluolingo** envia sua tarefa real para um **agente em segundo plano** e então insere casualmente uma pergunta de idioma no chat —— *"btw, enquanto isso roda, uma rapidinha…"*. No instante em que o trabalho termina, você recebe o resultado —— tendo respondido ou não. Um companheiro gentil, nunca um portão.
+Cluolingo envia sua tarefa real para um **agente em segundo plano** e então insere casualmente uma pergunta de idioma no chat —— *"btw, enquanto isso roda, uma rapidinha…"*. No instante em que o trabalho termina, você recebe o resultado —— tendo respondido ou não. Um companheiro gentil, nunca um portão.
 
 Multilíngue: pratique inglês por padrão, ou `cluo lang Japanese` / `cluo lang Spanish` / qualquer coisa.
 

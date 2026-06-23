@@ -4,10 +4,9 @@
 
 [English](README.md) · **简体中文** · [繁體中文](README.zh-TW.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Português](README.pt.md)
 
-灵感来自 [workout-gate](https://github.com/BotchetDig/workout-gate),但刻意做了一个反转:**它永远不挡你。**
+一个刻意的设计原则:**它永远不挡你。**
 
-- **workout-gate** 会冻结你的 prompt,逼你对着摄像头做完俯卧撑才放行。一个硬性的 gate。
-- **Cluolingo** 把你真正的任务丢给**后台 agent** 去跑,然后在聊天里口语地塞一道语言小测 —— *「btw,趁这个在跑,顺便问一下…」*。工作一完成,结果立刻给你 —— 答没答都一样。一个柔性伙伴,绝不是 gate。
+Cluolingo 把你真正的任务丢给**后台 agent** 去跑,然后在聊天里口语地塞一道语言小测 —— *「btw,趁这个在跑,顺便问一下…」*。工作一完成,结果立刻给你 —— 答没答都一样。一个柔性伙伴,绝不是 gate。
 
 多语言:默认练英文,或 `cluo lang Japanese` / `cluo lang Spanish`,想练哪种都行。
 

@@ -4,10 +4,9 @@
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · **Español** · [Português](README.pt.md)
 
-Inspirado en [workout-gate](https://github.com/BotchetDig/workout-gate), pero con una inversión deliberada: **nunca te bloquea.**
+Un principio de diseño deliberado: **nunca te bloquea.**
 
-- **workout-gate** congela tu prompt hasta que haces flexiones frente a la webcam. Una barrera dura.
-- **Cluolingo** envía tu tarea real a un **agente en segundo plano** y luego desliza con naturalidad una pregunta de idioma en el chat —— *"btw, mientras eso corre, una rapidita…"*. En cuanto el trabajo termina, recibes el resultado —— hayas respondido o no. Un compañero amable, nunca una barrera.
+Cluolingo envía tu tarea real a un **agente en segundo plano** y luego desliza con naturalidad una pregunta de idioma en el chat —— *"btw, mientras eso corre, una rapidita…"*. En cuanto el trabajo termina, recibes el resultado —— hayas respondido o no. Un compañero amable, nunca una barrera.
 
 Multilingüe: practica inglés por defecto, o `cluo lang Japanese` / `cluo lang Spanish` / lo que sea.
 

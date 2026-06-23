@@ -4,10 +4,9 @@
 
 **English** · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Português](README.pt.md)
 
-Inspired by [workout-gate](https://github.com/BotchetDig/workout-gate), but with one deliberate inversion: **it never blocks you.**
+One deliberate principle: **it never blocks you.**
 
-- **workout-gate** freezes your prompt until you do push-ups in front of a webcam. A hard gate.
-- **Cluolingo** sends your real task to a **background agent**, then casually slips a language question into the chat — *"btw, while that runs, quick one…"*. The moment the work finishes, you get the result — answered or not. A soft companion, never a gate.
+Cluolingo sends your real task to a **background agent**, then casually slips a language question into the chat — *"btw, while that runs, quick one…"*. The moment the work finishes, you get the result — answered or not. A soft companion, never a gate.
 
 Multi-language: practice English by default, or `cluo lang Japanese` / `cluo lang Spanish` / anything.
 

@@ -4,10 +4,9 @@
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [日本語](README.ja.md) · **한국어** · [Español](README.es.md) · [Português](README.pt.md)
 
-[workout-gate](https://github.com/BotchetDig/workout-gate)에서 영감을 받았지만, 한 가지를 의도적으로 뒤집었습니다: **당신을 멈추지 않습니다.**
+하나의 분명한 설계 원칙: **당신을 멈추지 않습니다.**
 
-- **workout-gate**는 웹캠 앞에서 팔굽혀펴기를 끝낼 때까지 프롬프트를 얼립니다. 단단한 게이트죠.
-- **Cluolingo**는 실제 작업을 **백그라운드 에이전트**에 넘기고, 그동안 채팅에 슬쩍 외국어 문제를 끼워 넣습니다 —— *"btw, 돌아가는 동안 하나만…"*. 작업이 끝나는 순간, 답을 했든 안 했든 결과가 돌아옵니다. 게이트가 아니라 부드러운 동반자입니다.
+Cluolingo는 실제 작업을 **백그라운드 에이전트**에 넘기고, 그동안 채팅에 슬쩍 외국어 문제를 끼워 넣습니다 —— *"btw, 돌아가는 동안 하나만…"*. 작업이 끝나는 순간, 답을 했든 안 했든 결과가 돌아옵니다. 게이트가 아니라 부드러운 동반자입니다.
 
 다국어 지원: 기본은 영어, 또는 `cluo lang Japanese` / `cluo lang Spanish` 등 무엇이든.
 
