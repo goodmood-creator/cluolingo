@@ -2,7 +2,7 @@
 
 > **Claude × Duolingo** —— 讓 AI 幹活的同時,順便練語言。一個**不阻塞**的 [Claude Code](https://claude.com/claude-code) 陪練夥伴。
 
-[English](README.md) · **繁體中文** · [日本語](README.ja.md)
+[English](README.md) · [简体中文](README.zh-CN.md) · **繁體中文** · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Português](README.pt.md)
 
 靈感來自 [workout-gate](https://github.com/BotchetDig/workout-gate),但刻意做了一個反轉:**它永遠不擋你。**
 

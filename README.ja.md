@@ -2,7 +2,7 @@
 
 > **Claude × Duolingo** —— AI が働いている間に、ついでに語学を練習。[Claude Code](https://claude.com/claude-code) 向けの**ブロックしない**学習コンパニオン。
 
-[English](README.md) · [繁體中文](README.zh-TW.md) · **日本語**
+[English](README.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · **日本語** · [한국어](README.ko.md) · [Español](README.es.md) · [Português](README.pt.md)
 
 [workout-gate](https://github.com/BotchetDig/workout-gate) に着想を得つつ、ひとつだけ意図的に逆にしました：**あなたを止めません。**
 

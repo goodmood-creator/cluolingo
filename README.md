@@ -2,7 +2,7 @@
 
 > **Claude × Duolingo** — practice a language while your AI does the work. A **non-blocking** companion for [Claude Code](https://claude.com/claude-code).
 
-**English** · [繁體中文](README.zh-TW.md) · [日本語](README.ja.md)
+**English** · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Português](README.pt.md)
 
 Inspired by [workout-gate](https://github.com/BotchetDig/workout-gate), but with one deliberate inversion: **it never blocks you.**
 
