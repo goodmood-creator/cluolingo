@@ -70,7 +70,8 @@ cd cluolingo
 | 指令 | 作用 |
 |---|---|
 | `btw stats` | 顯示計分板(語言、正確率、連勝、學過的字) |
-| `btw answer <答案>` | 體制外回答待答題目(當場計分) |
+| `btw answer <答案>` | 體制外回答**最近一題**待答題目(當場計分) |
+| `btw pending` | 列出未答的題目 |
 | `cluo lang <語言>` | 設定目標練習語言(例 `cluo lang Japanese`) |
 | `cluo native <語言>` | 設定你的母語(預設 Chinese) |
 | `cluo on` / `cluo off` | 啟用 / 停用陪練 |
@@ -79,7 +80,7 @@ cd cluolingo
 | `cluo set freq <N>` | `freq` 模式下每 N 則 prompt 考一次 |
 | `cluo set chance <0-100>` | `chance` 模式下每則 prompt 的觸發機率 % |
 | `cluo reset` | 重置計分板(保留設定) |
-| `cluo ask <答案> [解說]` · `cluo grade correct\|wrong` · `cluo word <字詞>` | 由 Claude 出題/批改時呼叫 |
+| `cluo ask <答案> [解說] [題目]` · `cluo grade correct\|wrong` · `cluo word <字詞>` | 由 Claude 出題/批改時呼叫(pending 是佇列,多題不互蓋) |
 
 ## 語言
 

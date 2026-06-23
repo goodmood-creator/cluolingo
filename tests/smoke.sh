@@ -39,14 +39,26 @@ OUT="$(printf '%s' '{"prompt":"做個功能"}' | bash "$HOOK")"
 OUT="$(printf '%s' '{"prompt":"做個功能"}' | bash "$HOOK")"
 [ -n "$OUT" ] || fail "re-enabled hook should inject again"
 
-# 5. ask + case-insensitive answer scores correct, streak=1, pending cleared
-"$CLUO" ask "pagination" "x" >/dev/null
+# 5. ask + case-insensitive answer scores correct, streak=1, pending queue emptied
+"$CLUO" ask "pagination" "x" "split into pages = p___" >/dev/null
 ANS="$("$CLUO" answer "Pagination")"
 printf '%s' "$ANS" | grep -q "correct" || fail "answer should be graded correct"
 STREAK="$(jq -r '.streak' "$SANDBOX/cluolingo/state.json")"
 [ "$STREAK" = "1" ] || fail "streak should be 1 (got: $STREAK)"
-PENDING="$(jq -r '.pending' "$SANDBOX/cluolingo/state.json")"
-[ "$PENDING" = "null" ] || fail "pending should be cleared (got: $PENDING)"
+PCOUNT="$(jq -r '.pending | length' "$SANDBOX/cluolingo/state.json")"
+[ "$PCOUNT" = "0" ] || fail "pending queue should be empty (got length: $PCOUNT)"
+
+# 6. queue: two questions don't clobber; LIFO answers the most recent
+# (capture output into a var before grep — piping cluo into `grep -q` would close
+#  the pipe early and SIGPIPE cluo, which `pipefail` then misreports as failure)
+"$CLUO" ask "alpha" "first" "q1" >/dev/null
+"$CLUO" ask "beta" "second" "q2" >/dev/null
+[ "$(jq -r '.pending | length' "$SANDBOX/cluolingo/state.json")" = "2" ] || fail "queue should hold 2 questions"
+A1="$("$CLUO" answer "beta")"
+printf '%s' "$A1" | grep -q "correct" || fail "LIFO should grade the most recent (beta)"
+[ "$(jq -r '.pending | length' "$SANDBOX/cluolingo/state.json")" = "1" ] || fail "one question should remain after answering"
+A2="$("$CLUO" answer "alpha")"
+printf '%s' "$A2" | grep -q "correct" || fail "remaining question (alpha) should grade correct"
 
 echo "ok: all smoke checks passed"
 exit 0

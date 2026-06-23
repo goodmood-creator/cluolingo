@@ -70,7 +70,8 @@ Run with the zero-token `!` shell prefix inside Claude Code, e.g. `! btw stats`.
 | Command | Effect |
 |---|---|
 | `btw stats` | Show scoreboard (language, accuracy, streak, words learned) |
-| `btw answer <answer>` | Answer the pending question out-of-band (scored instantly) |
+| `btw answer <answer>` | Answer the most recent pending question out-of-band (scored instantly) |
+| `btw pending` | List open (unanswered) questions |
 | `cluo lang <language>` | Set the target practice language (e.g. `cluo lang Japanese`) |
 | `cluo native <language>` | Set your native language (default Chinese) |
 | `cluo on` / `cluo off` | Enable / disable the companion |
@@ -79,7 +80,7 @@ Run with the zero-token `!` shell prefix inside Claude Code, e.g. `! btw stats`.
 | `cluo set freq <N>` | In `freq` mode, ask every N prompts |
 | `cluo set chance <0-100>` | In `chance` mode, % probability per prompt |
 | `cluo reset` | Reset the scoreboard (keeps settings) |
-| `cluo ask <answer> [explanation]` · `cluo grade correct\|wrong` · `cluo word <text>` | Called by Claude when posing/grading a question |
+| `cluo ask <answer> [explanation] [question]` · `cluo grade correct\|wrong` · `cluo word <text>` | Called by Claude when posing/grading a question (pending is a queue) |
 
 ## Languages
 

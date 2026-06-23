@@ -70,7 +70,8 @@ Claude Code 内でトークン消費ゼロの `!` 接頭辞で実行します（
 | コマンド | 効果 |
 |---|---|
 | `btw stats` | スコアボード表示（言語・正解率・連勝・覚えた単語） |
-| `btw answer <答え>` | 保留中の問題にアウトオブバンドで回答（即採点） |
+| `btw answer <答え>` | **最新の**保留中の問題にアウトオブバンドで回答（即採点） |
+| `btw pending` | 未回答の問題を一覧表示 |
 | `cluo lang <言語>` | 練習するターゲット言語を設定（例 `cluo lang Japanese`） |
 | `cluo native <言語>` | 母語を設定（デフォルト Chinese） |
 | `cluo on` / `cluo off` | コンパニオンを有効 / 無効 |
@@ -79,7 +80,7 @@ Claude Code 内でトークン消費ゼロの `!` 接頭辞で実行します（
 | `cluo set freq <N>` | `freq` モードで N プロンプトごとに出題 |
 | `cluo set chance <0-100>` | `chance` モードでプロンプトごとの確率 % |
 | `cluo reset` | スコアボードをリセット（設定は保持） |
-| `cluo ask <答え> [解説]` · `cluo grade correct\|wrong` · `cluo word <語句>` | Claude が出題・採点時に呼び出す |
+| `cluo ask <答え> [解説] [問題]` · `cluo grade correct\|wrong` · `cluo word <語句>` | Claude が出題・採点時に呼び出す（pending はキューで多問が衝突しない） |
 
 ## 言語
 
