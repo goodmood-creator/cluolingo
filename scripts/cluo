@@ -86,10 +86,10 @@ case "$cmd" in
     _save --arg a "$a" --arg e "$e" --arg q "$q" '
       .pending = (((.pending // []) | if type=="object" then [.] else . end) + [{answer:$a, explain:$e, q:$q}])'
     n="$(jq '(.pending // []) | if type=="object" then 1 else length end' "$STATE_FILE")"
-    echo "📌 question queued (#$n pending) — answer with:  btw answer <your answer>"
+    echo "📌 question queued (#$n pending) — answer with:  /btw <your answer>   (or: cluo answer <your answer>)"
     ;;
   answer)
-    u="${*:-}"; [ -n "$u" ] || { echo "usage: btw answer <your answer>"; exit 1; }
+    u="${*:-}"; [ -n "$u" ] || { echo "usage: cluo answer <your answer>"; exit 1; }
     # grade the MOST RECENT queued question (LIFO), then remove it
     last="$(jq -c '((.pending // []) | if type=="object" then [.] else . end) | last // empty' "$STATE_FILE")"
     [ -n "$last" ] || { echo "🤔 no pending question right now"; exit 0; }
@@ -110,7 +110,7 @@ case "$cmd" in
     fi
     [ -n "$pe" ] && echo "   💡 $pe"
     rem="$(jq '(.pending // []) | length' "$STATE_FILE")"
-    [ "$rem" -gt 0 ] && echo "   ($rem more open — run: btw answer <ans> again)"
+    if [ "$rem" -gt 0 ]; then echo "   ($rem more open — answer the next with /btw <ans>)"; fi
     ;;
   pending)
     jq -r '((.pending // []) | if type=="object" then [.] else . end) as $p

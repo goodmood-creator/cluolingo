@@ -29,17 +29,18 @@ AI   ▸ English version
        🔧 페이지네이션 작업을 백그라운드에서 시작했습니다.
        btw, 돌아가는 동안 하나:
          리스트를 페이지로 나누는 동작을 영어로 p_________?
-       (`! btw answer pagination`으로 답하거나, 그냥 답장 —— 코드는 준비되면 붙여드립니다)
+       (`/btw pagination`으로 답하거나, `! cluo answer pagination`, 또는 그냥 답장 —— 코드는 준비되면 붙여드립니다)
 ```
 
 ## 메인 흐름을 방해하지 않고 답하기
 
-두 가지 방법, 그때그때 기분대로:
+세 가지 방법, 그때그때 기분대로:
 
-- **아웃오브밴드(권장, 제로 간섭):** `! btw answer pagination`. `!` 셸 접두사는 토큰을 소비하지 않고 대화에도 들어가지 않으므로 메인 작업을 오염시키지 않습니다. CLI가 즉시 채점하고 연승을 갱신합니다.
-- **채팅 안에서(설명이 필요할 때):** 그냥 `pagination`이라고 답장하세요. Claude가 한 줄 설명과 함께 따뜻하게 채점합니다. 컨텍스트를 조금 더 쓰지만 더 많이 배웁니다.
+- **`/btw pagination`(간편):** 슬래시 명령어. Claude가 채점하고, 연승을 갱신하고, 한 줄 설명을 덧붙입니다. `/` 메뉴에서 찾을 수 있습니다. 대화를 거치므로 토큰을 조금 씁니다.
+- **`! cluo answer pagination`(제로 간섭):** `!` 셸 접두사는 로컬에서 실행되어 토큰을 소비하지 않고 대화에도 들어가지 않으므로 메인 작업을 오염시키지 않습니다. CLI가 즉시 채점합니다.
+- **채팅에 그냥 `pagination` 답장:** Claude가 한 줄 설명과 함께 따뜻하게 채점합니다. 컨텍스트를 조금 더 쓰지만 더 많이 배웁니다.
 
-`btw`와 `cluo`는 **같은 명령어** —— 읽기 편한 쪽을 쓰세요(`! btw answer …`, `! cluo stats`).
+`/btw`는 답변용 슬래시 명령어 단축키이고, `cluo`는 완전한 CLI입니다 —— `!` 접두사로 실행하세요(예: `! cluo stats`).
 
 ## 설치
 
@@ -58,19 +59,19 @@ cd cluolingo
 ./install.sh
 ```
 
-`cluo` + `btw` CLI를 PATH에 링크하고, 훅을 `~/.claude/settings.json`에 연결합니다. 언제든 다시 실행 가능하며, 제거는 `./install.sh --uninstall`.
+`cluo` CLI를 PATH에 링크하고, 훅을 `~/.claude/settings.json`에 연결합니다. 언제든 다시 실행 가능하며, 제거는 `./install.sh --uninstall`.
 
 > [`jq`](https://jqlang.github.io/jq/)가 필요합니다(`brew install jq`).
 
-## CLI 명령어(`cluo` / `btw`)
+## CLI 명령어(`cluo`)
 
-Claude Code 안에서 토큰 소비가 없는 `!` 접두사로 실행하세요. 예: `! btw stats`.
+Claude Code 안에서 토큰 소비가 없는 `!` 접두사로 실행하세요. 예: `! cluo stats`. (문제 답변은 위의 `/btw` 슬래시 명령어가 보통 더 편합니다.)
 
 | 명령어 | 효과 |
 |---|---|
-| `btw stats` | 점수판 표시(언어, 정답률, 연승, 배운 단어) |
-| `btw answer <답>` | **가장 최근의** 대기 중인 문제에 아웃오브밴드로 답변(즉시 채점) |
-| `btw pending` | 미답 문제 목록 표시 |
+| `cluo answer <답>` | **가장 최근의** 대기 중인 문제에 답변(`/btw <답>` 슬래시 명령어도 동일) |
+| `cluo pending` | 미답 문제 목록 표시 |
+| `cluo stats` | 점수판 표시(언어, 정답률, 연승, 배운 단어) |
 | `cluo lang <언어>` | 연습할 대상 언어 설정(예: `cluo lang Japanese`) |
 | `cluo native <언어>` | 모국어 설정(기본 Chinese) |
 | `cluo on` / `cluo off` | 동반자 켜기 / 끄기 |

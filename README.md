@@ -29,17 +29,18 @@ AI  ▸ English version
       🔧 Kicked off the pagination work in the background.
       btw, while that runs — quick one:
         the act of splitting a list into pages is called p_________?
-      (answer with `! btw answer pagination`, or just reply — code drops in when ready)
+      (answer with `/btw pagination`, or `! cluo answer pagination`, or just reply — code drops in when ready)
 ```
 
 ## Answering without disrupting your flow
 
-Two ways to answer — pick per moment:
+Three ways to answer — pick per moment:
 
-- **Out-of-band (recommended, zero disruption):** `! btw answer pagination`. The `!` shell prefix costs zero tokens and never enters the conversation, so it doesn't pollute your main task. The CLI checks the answer and updates your streak instantly.
-- **In chat (when you want the explanation):** just reply `pagination`. Claude grades it warmly with a one-line explanation. Slightly more context, but you learn more.
+- **`/btw pagination` (easy):** the slash command. Claude scores it, updates your streak, and adds a one-line explanation. Discoverable from the `/` menu; it runs through the chat, so it costs a little.
+- **`! cluo answer pagination` (zero disruption):** the `!` shell prefix runs locally, costs zero tokens, and never enters the conversation, so it doesn't pollute your main task. The CLI scores it instantly.
+- **Just reply `pagination` in chat:** Claude grades it warmly with a one-line explanation. A bit more context, but you learn more.
 
-`btw` and `cluo` are the **same command** — use whichever reads better (`! btw answer …`, `! cluo stats`).
+`/btw` is the slash-command shortcut for answering; `cluo` is the full CLI — run it with the `!` prefix (e.g. `! cluo stats`).
 
 ## Install
 
@@ -58,19 +59,19 @@ cd cluolingo
 ./install.sh
 ```
 
-This links the `cluo` + `btw` CLI onto your PATH and wires the hook into `~/.claude/settings.json`. Re-run any time; uninstall with `./install.sh --uninstall`.
+This links the `cluo` CLI onto your PATH and wires the hook into `~/.claude/settings.json`. Re-run any time; uninstall with `./install.sh --uninstall`.
 
 > Requires [`jq`](https://jqlang.github.io/jq/) (`brew install jq`).
 
-## The CLI (`cluo` / `btw`)
+## The CLI (`cluo`)
 
-Run with the zero-token `!` shell prefix inside Claude Code, e.g. `! btw stats`.
+Run with the zero-token `!` shell prefix inside Claude Code, e.g. `! cluo stats`. (To answer a quiz, the `/btw` slash command above is usually easier.)
 
 | Command | Effect |
 |---|---|
-| `btw stats` | Show scoreboard (language, accuracy, streak, words learned) |
-| `btw answer <answer>` | Answer the most recent pending question out-of-band (scored instantly) |
-| `btw pending` | List open (unanswered) questions |
+| `cluo answer <answer>` | Answer the most recent pending question (the `/btw <answer>` slash command does the same) |
+| `cluo pending` | List open (unanswered) questions |
+| `cluo stats` | Show scoreboard (language, accuracy, streak, words learned) |
 | `cluo lang <language>` | Set the target practice language (e.g. `cluo lang Japanese`) |
 | `cluo native <language>` | Set your native language (default Chinese) |
 | `cluo on` / `cluo off` | Enable / disable the companion |
