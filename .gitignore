@@ -1,0 +1,4 @@
+# local scoreboard / state lives in the Claude config dir, never in the repo
+state.json
+*.state.*
+.DS_Store

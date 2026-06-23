@@ -1,0 +1,13 @@
+{
+  "name": "cluolingo",
+  "owner": {
+    "name": "sai"
+  },
+  "plugins": [
+    {
+      "name": "cluolingo",
+      "source": "./",
+      "description": "Claude × Duolingo — practice a language while your AI works. Real task runs in the background, the chat slips in a casual quiz. Multi-language, never gates execution."
+    }
+  ]
+}

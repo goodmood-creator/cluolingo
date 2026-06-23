@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+# cluo :: Cluolingo control + scoreboard CLI
+# Usage: cluo <command> [args]
+#   stats                    show scoreboard
+#   on | off                 enable / disable the companion
+#   lang <language>          set the target practice language (e.g. cluo lang Japanese)
+#   native <language>        set your native language (default Chinese)
+#   grade correct|wrong      record an answer (called by Claude)
+#   word <text>              log a newly taught vocab item (called by Claude)
+#   preset chill|normal|hardcore
+#   set mode every|freq|chance
+#   set freq <N> | set chance <0-100>
+#   reset                    reset the scoreboard (keeps settings)
+set -euo pipefail
+
+CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+STATE_DIR="$CONFIG_DIR/cluolingo"
+STATE_FILE="$STATE_DIR/state.json"
+
+command -v jq >/dev/null 2>&1 || { echo "cluo: jq is required"; exit 1; }
+mkdir -p "$STATE_DIR"
+if [ ! -f "$STATE_FILE" ]; then
+  cat > "$STATE_FILE" <<'JSON'
+{ "enabled": true, "mode": "every", "freq": 5, "chance": 30,
+  "target_lang": "English", "native_lang": "Chinese",
+  "prompt_count": 0, "quiz_count": 0, "correct": 0,
+  "streak": 0, "best_streak": 0, "words_seen": [] }
+JSON
+fi
+
+_save() { # _save [jq-args...] '<filter>'  — all args forwarded to jq, then the state file
+  local tmp; tmp="$(mktemp "$STATE_DIR/.state.XXXXXX")"
+  jq "$@" "$STATE_FILE" > "$tmp" && mv "$tmp" "$STATE_FILE"
+}
+
+cmd="${1:-stats}"; shift || true
+case "$cmd" in
+  stats)
+    jq -r '
+      "🦉 Cluolingo — scoreboard",
+      "  status   : \(if .enabled then "on" else "off" end)  (mode: \(.mode))",
+      "  learning : \(.target_lang)  (from \(.native_lang))",
+      "  asked    : \(.quiz_count)   correct: \(.correct)",
+      "  accuracy : \(if .quiz_count>0 then ((.correct*100/.quiz_count)|floor|tostring)+"%" else "—" end)",
+      "  streak   : \(.streak)   best: \(.best_streak)",
+      "  words    : \(.words_seen|length) learned"
+    ' "$STATE_FILE"
+    ;;
+  on)  _save '.enabled = true';  echo "cluolingo: on" ;;
+  off) _save '.enabled = false'; echo "cluolingo: off" ;;
+  lang)
+    l="${*:-}"; [ -n "$l" ] || { echo "usage: cluo lang <language>  (e.g. cluo lang Japanese)"; exit 1; }
+    _save --arg l "$l" '.target_lang = $l'
+    echo "🎯 now practicing: $l"
+    ;;
+  native)
+    l="${*:-}"; [ -n "$l" ] || { echo "usage: cluo native <language>"; exit 1; }
+    _save --arg l "$l" '.native_lang = $l'
+    echo "🏠 native language: $l"
+    ;;
+  grade)
+    case "${1:-}" in
+      correct) _save '.quiz_count+=1 | .correct+=1 | .streak+=1 | .best_streak = ([.best_streak,.streak]|max)'
+               echo "✅ correct  (streak: $(jq -r .streak "$STATE_FILE"))" ;;
+      wrong)   _save '.quiz_count+=1 | .streak = 0'
+               echo "❌ wrong  (streak reset)" ;;
+      *) echo "usage: cluo grade correct|wrong"; exit 1 ;;
+    esac
+    ;;
+  word)
+    w="${*:-}"; [ -n "$w" ] || { echo "usage: cluo word <text>"; exit 1; }
+    _save --arg w "$w" '.words_seen = ((.words_seen + [$w]) | unique)'
+    echo "📒 logged: $w"
+    ;;
+  preset)
+    case "${1:-}" in
+      chill)    _save '.mode="chance" | .chance=20' ; echo "preset: chill (20% chance)" ;;
+      normal)   _save '.mode="every"' ; echo "preset: normal (every task)" ;;
+      hardcore) _save '.mode="every"' ; echo "preset: hardcore (every task)" ;;
+      *) echo "usage: cluo preset chill|normal|hardcore"; exit 1 ;;
+    esac
+    ;;
+  set)
+    key="${1:-}"; val="${2:-}"
+    case "$key" in
+      mode)   case "$val" in every|freq|chance) _save --arg v "$val" '.mode=$v'; echo "mode: $val";; *) echo "mode must be every|freq|chance"; exit 1;; esac ;;
+      freq)   _save --argjson v "$val" '.freq=$v'; echo "freq: $val" ;;
+      chance) _save --argjson v "$val" '.chance=$v'; echo "chance: $val%" ;;
+      *) echo "usage: cluo set mode|freq|chance <value>"; exit 1 ;;
+    esac
+    ;;
+  reset)
+    _save '.prompt_count=0 | .quiz_count=0 | .correct=0 | .streak=0 | .best_streak=0 | .words_seen=[]'
+    echo "scoreboard reset"
+    ;;
+  *) echo "cluo: unknown command '$cmd' (try: stats, on, off, lang, native, grade, word, preset, set, reset)"; exit 1 ;;
+esac
