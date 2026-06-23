@@ -25,8 +25,8 @@ Quando você responde, seu placar é atualizado via a CLI `cluo`.
 Você ▸ 幫我把這個列表加上分頁
 IA   ▸ English version
          Rewrite: "Add pagination to this list for me."
-         Notes: 分頁 → pagination (não "paging")…
-       🦉 Quick quiz — o ato de dividir uma lista em páginas se chama p_________?
+         Phrasing notes: 分頁 → pagination (não "paging")
+       Quick quiz: o ato de dividir uma lista em páginas se chama p_________?
        🔧 Comecei o trabalho de paginação em segundo plano.
        (responda com `! cluo answer pagination` ou apenas responda —— o código chega quando estiver pronto)
 ```

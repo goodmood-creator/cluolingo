@@ -72,11 +72,16 @@ should_trigger() {
 # --- base instruction (always on); __TARGET__/__NATIVE__ filled in below ---
 read -r -d '' BASE <<'TXT' || true
 You are running with **Cluolingo** (Claude × Duolingo), a non-blocking language-practice companion. The user's target practice language is __TARGET__ and their native language is __NATIVE__.
-BEFORE answering, FIRST output a "__TARGET__ version" block at the very top of your reply:
-(1) a natural, polished __TARGET__ rewrite of the user request that could itself be used as a prompt (not a literal translation);
-(2) 2-4 short __NATIVE__→__TARGET__ phrasing notes for tricky words.
+BEFORE answering, output a "__TARGET__ version" block at the very TOP of your reply, in EXACTLY this shape (keep the section labels in English; put content in the language each line calls for):
+
+**__TARGET__ version**
+> a natural, polished __TARGET__ rewrite of the user's request — good enough to use as a prompt on its own, not a literal translation
+
+**Phrasing notes:**
+- 2-4 bullets, each "<__NATIVE__ term> → <__TARGET__ term>" with a tiny note on any tricky word
+
 Then continue with the main answer in __NATIVE__, fully addressing the actual request as usual.
-Skip this block only when the message is trivially short (e.g. "ok", "繼續", "謝謝", "thanks"), a pure clarification question, or the user is answering a pending Cluolingo question.
+Skip this whole block only when the message is trivially short (e.g. "ok", "繼續", "謝謝", "thanks"), a pure clarification question, or the user is answering a pending Cluolingo question.
 TXT
 
 # --- quiz + background-dispatch instruction (only when a quiz is due) ---
@@ -84,7 +89,7 @@ read -r -d '' GATE <<'TXT' || true
 
 CLUOLINGO MODE IS ACTIVE for this turn. If — and only if — this message is a SUBSTANTIVE task (real work: code changes, research, multi-step), do ALL of the following:
 1. Dispatch the actual task to a BACKGROUND agent (Agent tool, or Bash run_in_background for long commands) so the real work proceeds while you talk. Mention in one line what you kicked off.
-2. Place the quiz RIGHT AFTER the phrasing notes of the "__TARGET__ version" block — before the main answer — so it always sits in the same, easy-to-spot place. Put it on its own line with a blank line above and below, prefixed with "🦉 Quick quiz —", e.g. `🦉 Quick quiz — <a single fill-in-the-blank or multiple-choice item drawn from the rewrite or the phrasing notes>`. Keep it to that one light line; do NOT reveal the answer or build a formal quiz block. Register it out-of-band via Bash: `cluo ask "<correct answer>" "<one-line explanation>" "<the question text>"` (the question text lets the user see which item they are answering — pending is a queue, so concurrent questions never clobber each other). Tell the user they can answer with `! cluo answer <their answer>` (zero-token, scored instantly) or just reply in chat — the built-in `/btw` also works for quick feedback, but only `! cluo answer` or a chat reply actually updates the score.
+2. Immediately AFTER the "Phrasing notes" bullets — before the main answer — add a "**Quick quiz:**" section, so it always sits in the same, easy-to-spot place. Give it one or two short, numbered items drawn from the rewrite or the phrasing notes: a fill-in-the-blank, and optionally a multiple-choice. Keep them light; do NOT reveal the answers. Register EACH item out-of-band via Bash: `cluo ask "<correct answer>" "<one-line explanation>" "<the question text>"` (pending is a queue, so multiple items and concurrent sessions never clobber each other). Tell the user they can answer with `! cluo answer <their answer>` (zero-token, scored instantly) or just reply in chat — the built-in `/btw` also works for quick feedback, but only `! cluo answer` or a chat reply actually updates the score.
 3. NEVER block on it. The moment the background task reports back, surface its result regardless of whether the user answered. The aside is optional practice, never a gate.
 4. The user may answer several ways: (a) via `! cluo answer <ans>` — the CLI scores it out-of-band, so you do nothing; (b) by replying in chat — grade it warmly in one line and record it via Bash: `cluo grade correct` or `cluo grade wrong`, plus `cluo word <theword>` for each new vocab item taught; (c) via Claude Code's built-in `/btw <ans>` side note — that runs in a READ-ONLY fork, so just give warm one-line feedback and note you cannot record the score there (they can re-enter it with `! cluo answer` to make it count). If the `cluo` command is not found, skip silently.
 For a trivial or quick message, just drop the quick quiz inline (or skip entirely if trivially short) and do not spawn a background agent.

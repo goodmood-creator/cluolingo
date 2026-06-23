@@ -25,8 +25,8 @@ When you answer, your scoreboard updates via the `cluo` CLI.
 You ▸ 幫我把這個列表加上分頁
 AI  ▸ English version
         Rewrite: "Add pagination to this list for me."
-        Notes: 分頁 → pagination (not "paging")…
-      🦉 Quick quiz — the act of splitting a list into pages is called p_________?
+        Phrasing notes: 分頁 → pagination (not "paging")
+      Quick quiz: the act of splitting a list into pages is called p_________?
       🔧 Kicked off the pagination work in the background.
       (answer with `! cluo answer pagination` or just reply — code drops in when ready)
 ```
