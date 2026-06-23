@@ -79,43 +79,56 @@ case "$cmd" in
     ;;
   ask)
     # Claude queues a pending question so the user can answer out-of-band.
-    # pending is a QUEUE — multiple concurrent sessions/agents can each add one
-    # without clobbering the others.
+    # pending is a QUEUE; each item is tagged with the Claude Code session id so a
+    # session answers its OWN questions even when several run in parallel.
     a="${1:-}"; e="${2:-}"; q="${3:-}"
     [ -n "$a" ] || { echo "usage: cluo ask <correct_answer> [explanation] [question]"; exit 1; }
-    _save --arg a "$a" --arg e "$e" --arg q "$q" '
-      .pending = (((.pending // []) | if type=="object" then [.] else . end) + [{answer:$a, explain:$e, q:$q}])'
+    sid="${CLAUDE_CODE_SESSION_ID:-}"
+    _save --arg a "$a" --arg e "$e" --arg q "$q" --arg s "$sid" '
+      .pending = (((.pending // []) | if type=="object" then [.] else . end) + [{answer:$a, explain:$e, q:$q, session:$s}])'
     n="$(jq '(.pending // []) | if type=="object" then 1 else length end' "$STATE_FILE")"
     echo "📌 question queued (#$n pending) — answer with:  /btw <your answer>   (or: cluo answer <your answer>)"
     ;;
   answer)
     u="${*:-}"; [ -n "$u" ] || { echo "usage: cluo answer <your answer>"; exit 1; }
-    # grade the MOST RECENT queued question (LIFO), then remove it
-    last="$(jq -c '((.pending // []) | if type=="object" then [.] else . end) | last // empty' "$STATE_FILE")"
-    [ -n "$last" ] || { echo "🤔 no pending question right now"; exit 0; }
-    pa="$(printf '%s' "$last" | jq -r '.answer // empty')"
-    pe="$(printf '%s' "$last" | jq -r '.explain // empty')"
-    pq="$(printf '%s' "$last" | jq -r '.q // empty')"
+    sid="${CLAUDE_CODE_SESSION_ID:-}"
+    # Grade THIS session's most-recent question (plus any legacy untagged one).
+    # If no session id is known, fall back to the global most-recent (LIFO).
+    idx="$(jq --arg s "$sid" '
+      (((.pending // []) | if type=="object" then [.] else . end))
+      | [ to_entries[] | select(($s=="") or (.value.session==$s) or ((.value.session // "")=="")) | .key ]
+      | (last // -1)' "$STATE_FILE")"
+    [ "$idx" != "-1" ] || { echo "🤔 no pending question for you right now"; exit 0; }
+    tgt="$(jq -c --argjson i "$idx" '(((.pending // []) | if type=="object" then [.] else . end))[$i]' "$STATE_FILE")"
+    pa="$(printf '%s' "$tgt" | jq -r '.answer // empty')"
+    pe="$(printf '%s' "$tgt" | jq -r '.explain // empty')"
+    pq="$(printf '%s' "$tgt" | jq -r '.q // empty')"
     [ -n "$pq" ] && echo "Q: $pq"
     if [ "$(_norm "$u")" = "$(_norm "$pa")" ]; then
-      _save '.pending = ((.pending // []) | if type=="object" then [.] else . end)
+      _save --argjson i "$idx" '.pending = ((.pending // []) | if type=="object" then [.] else . end)
              | .quiz_count+=1 | .correct+=1 | .streak+=1 | .best_streak=([.best_streak,.streak]|max)
-             | .pending = .pending[:-1]'
+             | .pending = (.pending[:$i] + .pending[$i+1:])'
       echo "✅ correct!  (streak: $(jq -r .streak "$STATE_FILE"))"
     else
-      _save '.pending = ((.pending // []) | if type=="object" then [.] else . end)
+      _save --argjson i "$idx" '.pending = ((.pending // []) | if type=="object" then [.] else . end)
              | .quiz_count+=1 | .streak=0
-             | .pending = .pending[:-1]'
+             | .pending = (.pending[:$i] + .pending[$i+1:])'
       echo "❌ not quite — the answer was: $pa"
     fi
     [ -n "$pe" ] && echo "   💡 $pe"
-    rem="$(jq '(.pending // []) | length' "$STATE_FILE")"
-    if [ "$rem" -gt 0 ]; then echo "   ($rem more open — answer the next with /btw <ans>)"; fi
+    rem="$(jq --arg s "$sid" '(((.pending // []) | if type=="object" then [.] else . end))
+           | map(select(($s=="") or (.session==$s) or ((.session // "")==""))) | length' "$STATE_FILE")"
+    if [ "$rem" -gt 0 ]; then echo "   ($rem more open for you — answer the next with: cluo answer <ans>)"; fi
     ;;
   pending)
-    jq -r '((.pending // []) | if type=="object" then [.] else . end) as $p
-           | if ($p|length)==0 then "（no open questions）"
-             else ($p | to_entries | reverse[] | "  [\(.key+1)] \(.value.q // ("answer: "+.value.answer))") end' "$STATE_FILE"
+    sid="${CLAUDE_CODE_SESSION_ID:-}"
+    jq -r --arg s "$sid" '
+      (((.pending // []) | if type=="object" then [.] else . end)) as $all
+      | ($all | map(select(($s=="") or (.session==$s) or ((.session // "")=="")))) as $mine
+      | (if ($mine|length)==0 then "（no open questions for you）"
+         else ($mine | to_entries | reverse[] | "  [\(.key+1)] \(.value.q // ("answer: "+.value.answer))") end),
+        (if ($all|length) > ($mine|length) then "  (+\(($all|length)-($mine|length)) open in other sessions)" else empty end)
+    ' "$STATE_FILE"
     ;;
   preset)
     case "${1:-}" in

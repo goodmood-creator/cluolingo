@@ -28,7 +28,7 @@ Two parts that never call each other directly — they communicate only through 
 - State: `$CLAUDE_CONFIG_DIR/cluolingo/state.json` (default `~/.claude/cluolingo/`). All writes are atomic (`mktemp` + `mv`).
 
 **State shape** (single JSON file): `enabled, mode, freq, chance, target_lang, native_lang, prompt_count, quiz_count, correct, streak, best_streak, pending, words_seen`.
-- `pending` is a **QUEUE** of `{answer, explain, q}`, not a single slot — deliberately, so multiple concurrent sessions/agents can each `cluo ask` without clobbering. `cluo answer` grades the **most recent (LIFO)** item and pops it.
+- `pending` is a **QUEUE** of `{answer, explain, q, session}`, not a single slot — so concurrent sessions/agents each `cluo ask` without clobbering. Each item is tagged with `$CLAUDE_CODE_SESSION_ID` at `ask` time; **`cluo answer` grades the current session's most-recent item** and pops it (falls back to global most-recent when no session id is set; legacy untagged items stay answerable by anyone). This session-scoping is what makes parallel sessions answer their OWN quizzes instead of each other's.
 
 ## Non-obvious invariants (don't regress these)
 

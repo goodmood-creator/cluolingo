@@ -60,5 +60,29 @@ printf '%s' "$A1" | grep -q "correct" || fail "LIFO should grade the most recent
 A2="$("$CLUO" answer "alpha")"
 printf '%s' "$A2" | grep -q "correct" || fail "remaining question (alpha) should grade correct"
 
+# 7. session scoping: a session answers ITS question, not another session's newer one
+"$CLUO" reset >/dev/null
+CLAUDE_CODE_SESSION_ID="sessA" "$CLUO" ask "apple" "x" "qA" >/dev/null
+CLAUDE_CODE_SESSION_ID="sessB" "$CLUO" ask "banana" "x" "qB" >/dev/null
+A7="$(CLAUDE_CODE_SESSION_ID="sessA" "$CLUO" answer "apple")"
+printf '%s' "$A7" | grep -q "correct" || fail "session A must grade its own question (apple), not session B's newer one"
+[ "$(jq -r '.pending | length' "$SANDBOX/cluolingo/state.json")" = "1" ] || fail "session B's question must remain pending"
+[ "$(jq -r '.pending[0].answer' "$SANDBOX/cluolingo/state.json")" = "banana" ] || fail "the remaining question must be session B's (banana)"
+A7B="$(CLAUDE_CODE_SESSION_ID="sessB" "$CLUO" answer "banana")"
+printf '%s' "$A7B" | grep -q "correct" || fail "session B must grade its own question (banana)"
+
+# 8. a session must NOT answer another session's question when it has none of its own
+"$CLUO" reset >/dev/null
+CLAUDE_CODE_SESSION_ID="sessB" "$CLUO" ask "cherry" "x" "qC" >/dev/null
+A8="$(CLAUDE_CODE_SESSION_ID="sessA" "$CLUO" answer "cherry")"
+printf '%s' "$A8" | grep -q "no pending question for you" || fail "session A must not see session B's question"
+[ "$(jq -r '.pending | length' "$SANDBOX/cluolingo/state.json")" = "1" ] || fail "session B's question must stay pending"
+
+# 9. legacy untagged questions stay answerable by any session (backward compat)
+"$CLUO" reset >/dev/null
+jq '.pending = [{answer:"legacy", explain:"x", q:"qL"}]' "$SANDBOX/cluolingo/state.json" > "$SANDBOX/_t.json" && mv "$SANDBOX/_t.json" "$SANDBOX/cluolingo/state.json"
+A9="$(CLAUDE_CODE_SESSION_ID="sessZ" "$CLUO" answer "legacy")"
+printf '%s' "$A9" | grep -q "correct" || fail "legacy untagged question must be answerable by any session"
+
 echo "ok: all smoke checks passed"
 exit 0
