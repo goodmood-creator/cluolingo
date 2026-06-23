@@ -1,7 +1,7 @@
 {
   "name": "cluolingo",
   "version": "0.2.0",
-  "description": "Cluolingo — Claude × Duolingo. Practice a language while your AI works. A non-blocking companion that runs your real task in the background and casually quizzes you on the side. Multi-language, never gates execution.",
+  "description": "Cluolingo — Claude × Duolingo. Practice a language while your AI works: it runs your real task in the background and casually quizzes you on the side. Bonus: the polished rewrite of your prompt doubles as a check that the AI understood you. Multi-language, never gates execution.",
   "author": {
     "name": "goodmood-creator"
   },

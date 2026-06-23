@@ -7,7 +7,7 @@
     {
       "name": "cluolingo",
       "source": "./",
-      "description": "Claude × Duolingo — practice a language while your AI works. Real task runs in the background, the chat slips in a casual quiz. Multi-language, never gates execution."
+      "description": "Claude × Duolingo — practice a language while your AI works. Real task runs in the background, the chat slips in a casual quiz, and the rewrite of your prompt doubles as a check that the AI understood you. Multi-language, never gates execution."
     }
   ]
 }
