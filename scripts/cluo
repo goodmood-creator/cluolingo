@@ -119,5 +119,24 @@ case "$cmd" in
     _save '.prompt_count=0 | .quiz_count=0 | .correct=0 | .streak=0 | .best_streak=0 | .words_seen=[]'
     echo "scoreboard reset"
     ;;
-  *) echo "cluo: unknown command '$cmd' (try: stats, on, off, lang, native, ask, answer, grade, word, preset, set, reset)"; exit 1 ;;
+  help|-h|--help)
+    cat <<'USAGE'
+cluo :: Cluolingo control + scoreboard CLI
+Usage: cluo <command> [args]
+  stats                    show scoreboard
+  on | off                 enable / disable the companion
+  lang <language>          set the target practice language (e.g. cluo lang Japanese)
+  native <language>        set your native language (default Chinese)
+  ask <answer> [explain]   register a pending question (called by Claude)
+  answer <text>            answer the pending question
+  grade correct|wrong      record an answer (called by Claude)
+  word <text>              log a newly taught vocab item (called by Claude)
+  preset chill|normal|hardcore
+  set mode every|freq|chance
+  set freq <N> | set chance <0-100>
+  reset                    reset the scoreboard (keeps settings)
+  help | -h | --help       show this help
+USAGE
+    ;;
+  *) echo "cluo: unknown command '$cmd' (try: stats, on, off, lang, native, ask, answer, grade, word, preset, set, reset, help)"; exit 1 ;;
 esac
