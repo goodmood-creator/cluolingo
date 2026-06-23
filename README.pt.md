@@ -33,11 +33,13 @@ IA   ▸ English version
 
 ## Responder sem atrapalhar seu fluxo
 
-Três formas, escolha conforme o momento:
+Três formas —— todas dão o veredito + a resposta certa; diferem na *explicação* e em se *pontuam*:
 
-- **`! cluo answer pagination` (zero interrupção):** o prefixo de shell `!` roda localmente, não custa tokens e nunca entra na conversa, então não polui sua tarefa principal. A CLI confere na hora.
-- **Responda `pagination` no chat:** o Claude corrige com simpatia e uma explicação de uma linha. Um pouco mais de contexto, mas você aprende mais.
-- **O `/btw pagination` embutido do Claude Code:** envia sua resposta como uma nota lateral enquanto a tarefa continua rodando —— o Claude lê e corrige. (É um comando do próprio Claude Code, não parte do Cluolingo.)
+| Como | Explicação | Pontua? |
+|---|---|---|
+| `! cluo answer pagination` | uma frase fixa salva quando a pergunta foi feita —— local, zero tokens, não entra no chat | ✅ |
+| responda `pagination` no chat | o Claude corrige sua resposta ao vivo (aponta *onde* você errou); custa um pouco | ✅ |
+| `/btw pagination` embutido | ao vivo como uma resposta de chat, mas roda num fork somente leitura | ❌ |
 
 `cluo` é a CLI completa —— execute-a com o prefixo `!` (ex.: `! cluo stats`).
 

@@ -33,11 +33,13 @@ AI  ▸ English version
 
 ## 怎麼答題最不擾主流程
 
-三種方式,看當下心情挑:
+三種方式 —— 都會給「對/錯 + 正解」,差別在**解說**和**會不會計分**:
 
-- **`! cluo answer pagination`(零干擾):** `!` 開頭的 shell 指令在本地跑,**零 token、根本不進對話**,所以不會污染你的主任務。CLI 當場對答案。
-- **直接在聊天回 `pagination`:** Claude 會溫和批改 + 一行解說。多一點點 context,但學得更多。
-- **Claude Code 內建的 `/btw pagination`:** 把答案當 side note 丟出去,主任務繼續跑 —— Claude 讀到後幫你批改。(這是 Claude Code 自己的指令,不屬於 Cluolingo。)
+| 方式 | 解說 | 計分 |
+|---|---|---|
+| `! cluo answer pagination` | 出題時就存好的固定一句 —— 本地、零 token、不進對話 | ✅ |
+| 在聊天回 `pagination` | Claude 即時看你的答案客製批改(會點出你哪裡錯);算一點點 token | ✅ |
+| 內建 `/btw pagination` | 跟聊天回覆一樣即時,但跑在唯讀 fork | ❌ |
 
 `cluo` 是完整 CLI —— 用 `!` 前綴跑(例 `! cluo stats`)。
 

@@ -33,11 +33,13 @@ AI  ▸ English version
 
 ## Answering without disrupting your flow
 
-Three ways to answer — pick per moment:
+Three ways to answer — all give the verdict + the correct answer; they differ in the *explanation* and whether they *score*:
 
-- **`! cluo answer pagination` (zero disruption):** the `!` shell prefix runs locally, costs zero tokens, and never enters the conversation, so it doesn't pollute your main task. The CLI scores it instantly.
-- **Just reply `pagination` in chat:** Claude grades it warmly with a one-line explanation. A bit more context, but you learn more.
-- **Claude Code's built-in `/btw pagination`:** fires your answer as a side note while the task keeps running — Claude reads it and grades you. (That's Claude Code's own command, not part of Cluolingo.)
+| How | Explanation | Scores? |
+|---|---|---|
+| `! cluo answer pagination` | a fixed one-liner saved when the question was posed — local, zero-token, never enters the chat | ✅ |
+| reply `pagination` in chat | Claude grades your actual answer live (catches *how* you slipped); costs a little | ✅ |
+| built-in `/btw pagination` | live like a chat reply, but runs in a read-only fork | ❌ |
 
 `cluo` is the full CLI — run it with the `!` prefix (e.g. `! cluo stats`).
 
