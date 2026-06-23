@@ -6,7 +6,7 @@
 
 One deliberate principle: **it never blocks you.**
 
-Cluolingo sends your real task to a **background agent**, then casually slips a language question into the chat — *"btw, while that runs, quick one…"*. The moment the work finishes, you get the result — answered or not. A soft companion, never a gate.
+Cluolingo sends your real task to a **background agent**, then casually slips a language question into the chat — *"quick quiz while that runs…"*. The moment the work finishes, you get the result — answered or not. A soft companion, never a gate.
 
 Multi-language: practice English by default, or `cluo lang Japanese` / `cluo lang Spanish` / anything.
 
@@ -16,7 +16,7 @@ A `UserPromptSubmit` hook injects behavioral context on every prompt. For a subs
 
 1. **Rewrite** your request into polished **{target language}** + 2–4 phrasing notes (the "_Language_ version" block).
 2. **Dispatch** the actual work to a background agent so it runs while you talk.
-3. **Slip in a "btw"** — one casual fill-in-the-blank or multiple-choice question drawn from the rewrite.
+3. **Slip in a quick quiz** — one casual fill-in-the-blank or multiple-choice question drawn from the rewrite.
 4. **Never wait.** When the background task reports back, the result is surfaced regardless of the question. The aside is optional practice, not a gate.
 
 When you answer, your scoreboard updates via the `cluo` CLI.
@@ -26,7 +26,7 @@ You ▸ 幫我把這個列表加上分頁
 AI  ▸ English version
         Rewrite: "Add pagination to this list for me."
         Notes: 分頁 → pagination (not "paging")…
-      🦉 btw — quick one: the act of splitting a list into pages is called p_________?
+      🦉 Quick quiz — the act of splitting a list into pages is called p_________?
       🔧 Kicked off the pagination work in the background.
       (answer with `! cluo answer pagination` or just reply — code drops in when ready)
 ```
@@ -101,7 +101,7 @@ cluo native Chinese    # your native language for the phrasing notes
 
 ## Trigger modes
 
-- **every** (default) — every substantive task gets a "btw".
+- **every** (default) — every substantive task gets a quick quiz.
 - **freq** — ask every `N` prompts.
 - **chance** — ask with `chance`% probability per prompt (roulette).
 

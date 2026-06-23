@@ -6,7 +6,7 @@
 
 Um princípio de design deliberado: **ele nunca te bloqueia.**
 
-Cluolingo envia sua tarefa real para um **agente em segundo plano** e então insere casualmente uma pergunta de idioma no chat —— *"btw, enquanto isso roda, uma rapidinha…"*. No instante em que o trabalho termina, você recebe o resultado —— tendo respondido ou não. Um companheiro gentil, nunca um portão.
+Cluolingo envia sua tarefa real para um **agente em segundo plano** e então insere casualmente uma pergunta de idioma no chat —— *"quiz rápido enquanto isso roda…"*. No instante em que o trabalho termina, você recebe o resultado —— tendo respondido ou não. Um companheiro gentil, nunca um portão.
 
 Multilíngue: pratique inglês por padrão, ou `cluo lang Japanese` / `cluo lang Spanish` / qualquer coisa.
 
@@ -16,7 +16,7 @@ Um hook `UserPromptSubmit` injeta contexto de comportamento em cada prompt. Para
 
 1. **Reescrever** seu pedido em um **{idioma-alvo}** refinado + 2–4 notas de fraseado (o bloco «_Idioma_ version»).
 2. **Despachar** o trabalho real para um agente em segundo plano para rodar enquanto você conversa.
-3. **Inserir um "btw"** —— uma pergunta de preencher a lacuna ou de múltipla escolha a partir da reescrita.
+3. **Inserir um quiz rápido** —— uma pergunta de preencher a lacuna ou de múltipla escolha a partir da reescrita.
 4. **Nunca esperar.** Quando a tarefa em segundo plano retorna, o resultado é exibido independentemente da pergunta. O aparte é prática opcional, não um portão.
 
 Quando você responde, seu placar é atualizado via a CLI `cluo`.
@@ -26,7 +26,7 @@ Você ▸ 幫我把這個列表加上分頁
 IA   ▸ English version
          Rewrite: "Add pagination to this list for me."
          Notes: 分頁 → pagination (não "paging")…
-       🦉 btw — uma rapidinha: o ato de dividir uma lista em páginas se chama p_________?
+       🦉 Quick quiz — o ato de dividir uma lista em páginas se chama p_________?
        🔧 Comecei o trabalho de paginação em segundo plano.
        (responda com `! cluo answer pagination` ou apenas responda —— o código chega quando estiver pronto)
 ```
@@ -101,7 +101,7 @@ cluo native Chinese    # seu idioma nativo para as notas de fraseado
 
 ## Modos de acionamento
 
-- **every** (padrão) —— toda tarefa substancial recebe um "btw".
+- **every** (padrão) —— toda tarefa substancial recebe um quiz rápido.
 - **freq** —— pergunta a cada `N` prompts.
 - **chance** —— pergunta com `chance`% de probabilidade por prompt (roleta).
 
