@@ -74,8 +74,9 @@ Run with the zero-token `!` shell prefix inside Claude Code, e.g. `! cluo stats`
 
 | Command | Effect |
 |---|---|
-| `cluo answer <answer>` | Answer the most recent pending question (scored instantly) |
-| `cluo pending` | List open (unanswered) questions |
+| `cluo answer [answer]` | Answer your most recent pending question (scored instantly). **No answer = peek** what's open for your session |
+| `cluo pending [--all]` | List your open questions. `--all` = every session's, each tagged by session id |
+| `cluo pending clear [--all]` | Clear your session's open questions (+ legacy untagged). `--all` = wipe every session's |
 | `cluo stats` | Show scoreboard (language, accuracy, streak, words learned) |
 | `cluo lang <language>` | Set the target practice language (e.g. `cluo lang Japanese`) |
 | `cluo native <language>` | Set your native language (default Chinese) |

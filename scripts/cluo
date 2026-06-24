@@ -86,12 +86,30 @@ case "$cmd" in
     sid="${CLAUDE_CODE_SESSION_ID:-}"
     _save --arg a "$a" --arg e "$e" --arg q "$q" --arg s "$sid" '
       .pending = (((.pending // []) | if type=="object" then [.] else . end) + [{answer:$a, explain:$e, q:$q, session:$s}])'
-    n="$(jq '(.pending // []) | if type=="object" then 1 else length end' "$STATE_FILE")"
-    echo "📌 question queued (#$n pending) — answer with:  /btw <your answer>   (or: cluo answer <your answer>)"
+    # Report a PER-SESSION count + the question text. The global queue length is
+    # noisy/alarming across many parallel sessions, so we don't surface it here.
+    mine="$(jq --arg s "$sid" '(((.pending // []) | if type=="object" then [.] else . end))
+            | map(select(($s=="") or (.session==$s) or ((.session // "")=="")))| length' "$STATE_FILE")"
+    if [ -n "$sid" ]; then tag=" [sess ${sid: -4}]"; else tag=""; fi
+    echo "📌 queued$tag — you now have $mine open in this session"
+    [ -n "$q" ] && echo "   Q: $q"
+    echo "   answer:  cluo answer <your answer>   (peek what's open: cluo answer)"
     ;;
   answer)
-    u="${*:-}"; [ -n "$u" ] || { echo "usage: cluo answer <your answer>"; exit 1; }
     sid="${CLAUDE_CODE_SESSION_ID:-}"
+    u="${*:-}"
+    if [ -z "$u" ]; then
+      # No answer given → peek mode: show THIS session's open questions so you can
+      # see exactly what you're being asked before you reply.
+      jq -r --arg s "$sid" '
+        (((.pending // []) | if type=="object" then [.] else . end))
+        | map(select(($s=="") or (.session==$s) or ((.session // "")=="")))
+        | if length==0 then "🤔 nothing pending for you right now"
+          else "📋 \(length) open for you (newest last) — answer with: cluo answer <ans>",
+               (to_entries[] | "   • \(.value.q // ("answer: "+.value.answer))")
+          end' "$STATE_FILE"
+      exit 0
+    fi
     # Grade THIS session's most-recent question (plus any legacy untagged one).
     # If no session id is known, fall back to the global most-recent (LIFO).
     idx="$(jq --arg s "$sid" '
@@ -122,13 +140,40 @@ case "$cmd" in
     ;;
   pending)
     sid="${CLAUDE_CODE_SESSION_ID:-}"
-    jq -r --arg s "$sid" '
-      (((.pending // []) | if type=="object" then [.] else . end)) as $all
-      | ($all | map(select(($s=="") or (.session==$s) or ((.session // "")=="")))) as $mine
-      | (if ($mine|length)==0 then "（no open questions for you）"
-         else ($mine | to_entries | reverse[] | "  [\(.key+1)] \(.value.q // ("answer: "+.value.answer))") end),
-        (if ($all|length) > ($mine|length) then "  (+\(($all|length)-($mine|length)) open in other sessions)" else empty end)
-    ' "$STATE_FILE"
+    if [ "${1:-}" = "clear" ]; then
+      # Escape hatch for a cluttered backlog. Default clears YOUR session's open
+      # questions plus the legacy untagged ones; --all wipes every session's.
+      if [ "${2:-}" = "--all" ]; then
+        _save '.pending = []'; echo "🧹 cleared all pending questions"
+      else
+        before="$(jq '(((.pending // []) | if type=="object" then [.] else . end)) | length' "$STATE_FILE")"
+        _save --arg s "$sid" '.pending = (((.pending // []) | if type=="object" then [.] else . end)
+               | map(select((.session // "") as $x | ($x != $s) and ($x != ""))))'
+        after="$(jq '(.pending // []) | length' "$STATE_FILE")"
+        echo "🧹 cleared $((before-after)) (your session + legacy untagged); $after still open in other sessions"
+      fi
+    elif [ "${1:-}" = "--all" ]; then
+      # Cross-session audit: every open question, each tagged with its session's
+      # last 4 chars so you can tell who asked what when many sessions run at once.
+      jq -r '
+        (((.pending // []) | if type=="object" then [.] else . end)) as $all
+        | if ($all|length)==0 then "（nothing pending anywhere）"
+          else "📋 all open questions (\($all|length)):",
+               ($all | to_entries[]
+                 | (.value.session // "") as $s
+                 | (if ($s|length)>4 then $s[($s|length-4):] elif $s=="" then "----" else $s end) as $tag
+                 | "   [\($tag)] \(.value.q // ("answer: "+.value.answer))")
+          end' "$STATE_FILE"
+    else
+      jq -r --arg s "$sid" '
+        (((.pending // []) | if type=="object" then [.] else . end)) as $all
+        | ($all | map(select(($s=="") or (.session==$s) or ((.session // "")=="")))) as $mine
+        | (if ($mine|length)==0 then "（no open questions for you — see all with: cluo pending --all）"
+           else "📋 \(($mine|length)) open for you (newest last):",
+                ($mine | to_entries[] | "   • \(.value.q // ("answer: "+.value.answer))") end),
+          (if ($all|length) > ($mine|length) then "   (+\(($all|length)-($mine|length)) open in other sessions — cluo pending --all)" else empty end)
+      ' "$STATE_FILE"
+    fi
     ;;
   preset)
     case "${1:-}" in
@@ -160,8 +205,9 @@ Usage: cluo <command> [args]
   lang <language>          set the target practice language (e.g. cluo lang Japanese)
   native <language>        set your native language (default Chinese)
   ask <answer> [explain] [question]   queue a pending question (called by Claude)
-  answer <text>            answer the most recent pending question
-  pending                  list open (unanswered) questions
+  answer [text]            answer your most recent pending question; no text = peek what's open
+  pending [--all]          list your open questions (--all = every session, tagged)
+  pending clear [--all]    clear your session's open questions (--all = all sessions)
   grade correct|wrong      record an answer (called by Claude)
   word <text>              log a newly taught vocab item (called by Claude)
   preset chill|normal|hardcore

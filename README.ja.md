@@ -74,8 +74,9 @@ Claude Code 内でトークン消費ゼロの `!` 接頭辞で実行します（
 
 | コマンド | 効果 |
 |---|---|
-| `cluo answer <答え>` | **最新の**保留中の問題に回答（即採点） |
-| `cluo pending` | 未回答の問題を一覧表示 |
+| `cluo answer [答え]` | あなたの**最新の**保留中の問題に回答（即採点）。**答えなし = プレビュー**（自分の session の未回答を確認） |
+| `cluo pending [--all]` | 自分の未回答を一覧。`--all` = 全 session 分を session id 末尾4桁つきで表示 |
+| `cluo pending clear [--all]` | 自分の session の未回答（+ 旧来の未タグ分）を消去。`--all` = 全 session を一括消去 |
 | `cluo stats` | スコアボード表示（言語・正解率・連勝・覚えた単語） |
 | `cluo lang <言語>` | 練習するターゲット言語を設定（例 `cluo lang Japanese`） |
 | `cluo native <言語>` | 母語を設定（デフォルト Chinese） |

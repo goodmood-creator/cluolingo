@@ -74,8 +74,9 @@ cd cluolingo
 
 | 指令 | 作用 |
 |---|---|
-| `cluo answer <答案>` | 回答**最近一題**待答題目(當場計分) |
-| `cluo pending` | 列出未答的題目 |
+| `cluo answer [答案]` | 回答你**最近一題**待答題目(當場計分)。**不帶答案 = 偷看**你這個 session 有哪些待答 |
+| `cluo pending [--all]` | 列出你的待答題目。`--all` = 列出每個 session 的,各標 session id 末四碼 |
+| `cluo pending clear [--all]` | 清掉你這個 session 的待答題(+無主舊題)。`--all` = 全 session 清空 |
 | `cluo stats` | 顯示計分板(語言、正確率、連勝、學過的字) |
 | `cluo lang <語言>` | 設定目標練習語言(例 `cluo lang Japanese`) |
 | `cluo native <語言>` | 設定你的母語(預設 Chinese) |
