@@ -70,28 +70,50 @@ This links the `cluo` CLI onto your PATH and wires the hook into `~/.claude/sett
 
 ## The CLI (`cluo`)
 
-Run with the zero-token `!` shell prefix inside Claude Code, e.g. `! cluo stats`.
+You barely need this. When a quick quiz pops up, **just answer in chat** — Claude grades it and records your score, no command at all. Want a zero-token, instantly-scored reply instead? Use the `!` shell prefix:
+
+```
+! cluo answer pagination
+```
+
+That's the whole everyday loop: one quiz, one answer. Everything else is occasional.
+
+**Everyday**
 
 | Command | Effect |
 |---|---|
-| `cluo answer [answer]` | Answer your most recent pending question (scored instantly). **No answer = peek** what's open for your session |
-| `cluo answer @N [answer]` | Answer a **specific** open question by its listed number (1-based, as shown by peek/`pending`) — lets you answer older ones first |
-| `cluo answer --all [@N] [answer]` | This call: reach **every** session's backlog (drain orphaned questions left by finished sessions) |
-| `cluo answer --mine [@N] [answer]` | This call: limit to **this** session (overrides `scope=all`) |
-| `cluo answer @N=ans [@M=ans …]` | **Batch:** grade several open questions in one call. All `@N` resolve against current numbering before any are popped; multi-word answers work quoted or not |
-| `cluo pending [--all]` | List your open questions, each numbered `@N`. `--all` = every session's, each tagged by session id |
-| `cluo pending clear [--all]` | Clear your session's open questions (+ legacy untagged). `--all` = wipe every session's |
-| `cluo stats` | Show scoreboard (language, accuracy, streak, words learned) |
-| `cluo lang <language>` | Set the target practice language (e.g. `cluo lang Japanese`) |
-| `cluo native <language>` | Set your native language (default Chinese) |
+| `cluo answer <answer>` | Answer the current pending question (scored instantly). No answer = peek what's open |
+| `cluo stats` | Scoreboard — language, accuracy, streak, words learned |
+
+**Settings (set once and forget)**
+
+| Command | Effect |
+|---|---|
+| `cluo lang <language>` | Target practice language (e.g. `cluo lang Japanese`) |
+| `cluo native <language>` | Your native language (default Chinese) |
 | `cluo on` / `cluo off` | Enable / disable the companion |
 | `cluo preset chill\|normal\|hardcore` | `chill` = 20% chance per task; `normal`/`hardcore` = every task |
-| `cluo set mode every\|freq\|chance` | Trigger mode |
-| `cluo set freq <N>` | In `freq` mode, ask every N prompts |
-| `cluo set chance <0-100>` | In `chance` mode, % probability per prompt |
-| `cluo set scope all\|session` | Default scope for `cluo answer`. `all` = reach every session (no `--all` needed); `session` = this session only (default) |
+| `cluo set mode every\|freq\|chance` · `set freq <N>` · `set chance <0-100>` | Fine-tune when quizzes fire |
 | `cluo reset` | Reset the scoreboard (keeps settings) |
-| `cluo ask <answer> [explanation] [question]` · `cluo grade correct\|wrong` · `cluo word <text>` | Called by Claude when posing/grading a question (pending is a queue) |
+
+<details>
+<summary><b>Advanced — only if a backlog piles up</b> (you never need these for normal use)</summary>
+
+If lots of questions accumulate (e.g. across parallel sessions you didn't answer as you went), these let you drain them.
+
+| Command | Effect |
+|---|---|
+| `cluo pending [--all]` | List open questions, each numbered `@N`. `--all` = every session's, tagged by session id |
+| `cluo answer @N <answer>` | Answer a **specific** question by its `@N` number — e.g. answer older ones first |
+| `cluo answer @N=ans [@M=ans …]` | **Batch:** grade several at once. All `@N` resolve before any are popped; multi-word answers ok |
+| `cluo answer --all [@N] [answer]` | Reach **every** session's backlog (drain orphans from finished sessions) |
+| `cluo answer --mine [@N] [answer]` | Limit one call to **this** session (overrides `scope=all`) |
+| `cluo set scope all\|session` | Default scope for `cluo answer` (default `session`) |
+| `cluo pending clear [--all]` | Clear your open questions; `--all` = every session's |
+
+</details>
+
+<sub>Driven by Claude, not you: `cluo ask` / `cluo grade` / `cluo word` (pending is a queue).</sub>
 
 ## Languages
 

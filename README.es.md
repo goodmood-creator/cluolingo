@@ -70,27 +70,50 @@ Esto enlaza la CLI `cluo` en tu PATH y conecta el hook en `~/.claude/settings.js
 
 ## La CLI (`cluo`)
 
-Ejecuta con el prefijo de shell `!` (cero tokens) dentro de Claude Code, p. ej. `! cluo stats`.
+Casi no la necesitarás. Cuando aparece un quiz rápido, **responde directamente en el chat** —— Claude lo corrige y registra tu puntuación, sin ningún comando. ¿Prefieres una respuesta sin tokens y con puntuación instantánea? Usa el prefijo de shell `!`:
+
+```
+! cluo answer pagination
+```
+
+Ese es el ciclo diario completo: un quiz, una respuesta. Todo lo demás es ocasional.
+
+**Uso diario**
 
 | Comando | Efecto |
 |---|---|
-| `cluo answer <respuesta>` | Responde **la pregunta pendiente más reciente** (puntuada al instante) |
-| `cluo answer @N [answer]` | Responde una pregunta **específica** por su número listado (base 1, según `pending`/vista previa) — permite responder las más antiguas primero |
-| `cluo answer --all [@N] [answer]` | Esta llamada: abarca el pendiente de **todas** las sesiones (limpia preguntas huérfanas de sesiones terminadas) |
-| `cluo answer --mine [@N] [answer]` | Esta llamada: limita a **esta** sesión (anula `scope=all`) |
-| `cluo answer @N=ans [@M=ans …]` | **Lote:** puntúa varias preguntas abiertas en una sola llamada. Todos los `@N` se resuelven con la numeración actual antes de eliminar cualquiera; las respuestas de varias palabras funcionan con o sin comillas |
-| `cluo pending [--all]` | Lista tus preguntas abiertas, cada una numerada con `@N`. `--all` = las de todas las sesiones, etiquetadas con su session id |
-| `cluo stats` | Muestra el marcador (idioma, precisión, racha, palabras aprendidas) |
-| `cluo lang <idioma>` | Define el idioma objetivo de práctica (p. ej. `cluo lang Japanese`) |
-| `cluo native <idioma>` | Define tu idioma nativo (por defecto Chinese) |
+| `cluo answer <respuesta>` | Responde la pregunta pendiente actual (puntuada al instante). Sin respuesta = ver qué hay abierto |
+| `cluo stats` | Marcador —— idioma, precisión, racha, palabras aprendidas |
+
+**Ajustes (configura una vez y olvídate)**
+
+| Comando | Efecto |
+|---|---|
+| `cluo lang <idioma>` | Idioma objetivo de práctica (p. ej. `cluo lang Japanese`) |
+| `cluo native <idioma>` | Tu idioma nativo (por defecto Chinese) |
 | `cluo on` / `cluo off` | Activa / desactiva el compañero |
 | `cluo preset chill\|normal\|hardcore` | `chill` = 20% por tarea; `normal`/`hardcore` = cada tarea |
-| `cluo set mode every\|freq\|chance` | Modo de activación |
-| `cluo set freq <N>` | En modo `freq`, pregunta cada N prompts |
-| `cluo set chance <0-100>` | En modo `chance`, probabilidad % por prompt |
-| `cluo set scope all\|session` | Ámbito por defecto para `cluo answer`. `all` = abarca todas las sesiones (sin necesidad de `--all`); `session` = solo esta sesión (por defecto) |
+| `cluo set mode every\|freq\|chance` · `set freq <N>` · `set chance <0-100>` | Ajusta con precisión cuándo se lanzan los quizzes |
 | `cluo reset` | Reinicia el marcador (conserva los ajustes) |
-| `cluo ask <respuesta> [explicación] [pregunta]` · `cluo grade correct\|wrong` · `cluo word <texto>` | Llamado por Claude al plantear/corregir una pregunta (pending es una cola) |
+
+<details>
+<summary><b>Avanzado —— solo si se acumula un backlog</b> (nunca los necesitas en uso normal)</summary>
+
+Si se acumulan muchas preguntas (p. ej. a lo largo de sesiones paralelas que no respondiste sobre la marcha), estas te permiten vaciar la cola.
+
+| Comando | Efecto |
+|---|---|
+| `cluo pending [--all]` | Lista las preguntas abiertas, cada una numerada con `@N`. `--all` = las de todas las sesiones, etiquetadas con su session id |
+| `cluo answer @N <respuesta>` | Responde una pregunta **específica** por su número `@N` —— p. ej. responder las más antiguas primero |
+| `cluo answer @N=ans [@M=ans …]` | **Lote:** puntúa varias a la vez. Todos los `@N` se resuelven antes de eliminar cualquiera; las respuestas de varias palabras funcionan con o sin comillas |
+| `cluo answer --all [@N] [answer]` | Accede al backlog de **todas** las sesiones (elimina huérfanas de sesiones terminadas) |
+| `cluo answer --mine [@N] [answer]` | Limita una llamada a **esta** sesión (anula `scope=all`) |
+| `cluo set scope all\|session` | Ámbito por defecto para `cluo answer` (por defecto `session`) |
+| `cluo pending clear [--all]` | Borra tus preguntas abiertas; `--all` = las de todas las sesiones |
+
+</details>
+
+<sub>Lo maneja Claude, no tú: `cluo ask` / `cluo grade` / `cluo word` (pending es una cola).</sub>
 
 ## Idiomas
 

@@ -70,27 +70,50 @@ cd cluolingo
 
 ## CLI 命令(`cluo`)
 
-在 Claude Code 里用零 token 的 `!` 前缀执行,例如 `! cluo stats`。
+基本用不到这里。当一道快速小测弹出来,**直接在聊天里回答就好** —— Claude 会当场批改并记分,不需要任何命令。想要零 token、即刻计分的回复?用 `!` shell 前缀:
+
+```
+! cluo answer pagination
+```
+
+这就是整个日常循环:一道题,一个答案。其他都是偶发需求。
+
+**日常使用**
 
 | 命令 | 作用 |
 |---|---|
-| `cluo answer <答案>` | 回答**最近一题**待答题目(当场计分) |
-| `cluo answer @N [answer]` | 按编号答**指定**一题（从 1 起，即 `pending`/偷看列出的 `@N`）—— 可先答旧题 |
-| `cluo answer --all [@N] [answer]` | 本次调用：覆盖**全部** session 的积压题目（清掉已退出 session 留下的孤立题） |
-| `cluo answer --mine [@N] [answer]` | 本次调用：只限**当前** session（覆盖 `scope=all`） |
-| `cluo answer @N=ans [@M=ans …]` | **批量：** 一次调用为多道待答题评分。所有 `@N` 在弹出任意一题前统一按当前编号解析；多词答案加不加引号均可 |
-| `cluo pending [--all]` | 列出你的待答题目，每题标 `@N` 编号。`--all` = 列出每个 session 的，各标 session id |
-| `cluo stats` | 显示记分板(语言、正确率、连胜、学过的词) |
-| `cluo lang <语言>` | 设置目标练习语言(例 `cluo lang Japanese`) |
-| `cluo native <语言>` | 设置你的母语(默认 Chinese) |
+| `cluo answer <答案>` | 回答当前待答题目(当场计分)。不带答案 = 偷看有哪些题待答 |
+| `cluo stats` | 记分板 —— 语言、正确率、连胜、学过的词 |
+
+**设置(设一次,不用再管)**
+
+| 命令 | 作用 |
+|---|---|
+| `cluo lang <语言>` | 目标练习语言(例 `cluo lang Japanese`) |
+| `cluo native <语言>` | 你的母语(默认 Chinese) |
 | `cluo on` / `cluo off` | 启用 / 停用陪练 |
 | `cluo preset chill\|normal\|hardcore` | `chill` = 每任务 20% 概率;`normal`/`hardcore` = 每任务都考 |
-| `cluo set mode every\|freq\|chance` | 触发模式 |
-| `cluo set freq <N>` | `freq` 模式下每 N 条 prompt 考一次 |
-| `cluo set chance <0-100>` | `chance` 模式下每条 prompt 的触发概率 % |
-| `cluo set scope all\|session` | `cluo answer` 的默认范围。`all` = 覆盖全部 session(无需每次带 `--all`)；`session` = 仅当前 session(默认) |
+| `cluo set mode every\|freq\|chance` · `set freq <N>` · `set chance <0-100>` | 精调小测触发时机 |
 | `cluo reset` | 重置记分板(保留设置) |
-| `cluo ask <答案> [讲解] [题目]` · `cluo grade correct\|wrong` · `cluo word <词语>` | 由 Claude 出题/批改时调用(pending 是队列,多题不互盖) |
+
+<details>
+<summary><b>进阶 —— 仅在积压题目堆多时才需要</b>(正常使用永远不需要这些)</summary>
+
+如果积压了很多题(比如跑了多个并行 session 却没跟着答),这些命令让你把题消化掉。
+
+| 命令 | 作用 |
+|---|---|
+| `cluo pending [--all]` | 列出待答题目,每题标 `@N` 编号。`--all` = 每个 session 的,各标 session id |
+| `cluo answer @N <答案>` | 按 `@N` 编号回答**指定**一题 —— 可先答旧题 |
+| `cluo answer @N=ans [@M=ans …]` | **批量：** 一次为多题评分。所有 `@N` 在弹出任意一题前统一按当前编号解析；多词答案加不加引号均可 |
+| `cluo answer --all [@N] [answer]` | 覆盖**全部** session 的积压题(清掉已退出 session 留下的孤立题) |
+| `cluo answer --mine [@N] [answer]` | 本次调用只限**当前** session(覆盖 `scope=all`) |
+| `cluo set scope all\|session` | `cluo answer` 的默认范围(默认 `session`) |
+| `cluo pending clear [--all]` | 清掉你的待答题;`--all` = 全 session 清空 |
+
+</details>
+
+<sub>由 Claude 调用,不由你调用:`cluo ask` / `cluo grade` / `cluo word`(pending 是队列)。</sub>
 
 ## 语言
 

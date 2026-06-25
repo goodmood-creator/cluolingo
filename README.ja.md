@@ -70,28 +70,50 @@ cd cluolingo
 
 ## CLI コマンド（`cluo`）
 
-Claude Code 内でトークン消費ゼロの `!` 接頭辞で実行します（例：`! cluo stats`）。
+ほとんど使いません。クイズが出たら、**チャットで答えるだけ** —— Claude がその場で採点してスコアを記録します。コマンド不要です。トークンゼロ・即採点の返信がしたい場合は `!` シェルプレフィックスを使います：
+
+```
+! cluo answer pagination
+```
+
+これが日常のループの全てです：問題が1つ、答えが1つ。他は滅多に使いません。
+
+**日常使用**
 
 | コマンド | 効果 |
 |---|---|
-| `cluo answer [答え]` | あなたの**最新の**保留中の問題に回答（即採点）。**答えなし = プレビュー**（自分の session の未回答を確認） |
-| `cluo answer @N [answer]` | 番号を指定して**特定の**問題に回答（1始まり、`pending`/プレビューに表示される `@N`）—— 古い問題を先に答えることも可能 |
-| `cluo answer --all [@N] [answer]` | この呼び出し：**全** session の積み残しに対応（終了した session に残った孤立問題も消化） |
-| `cluo answer --mine [@N] [answer]` | この呼び出し：**この** session のみに限定（`scope=all` を上書き） |
-| `cluo answer @N=ans [@M=ans …]` | **一括：** 一度の呼び出しで複数の問題を採点。すべての `@N` はいずれかがポップされる前に現在の番号で解決される；複数語の答えは引用符あり・なし両方で動作 |
-| `cluo pending [--all]` | 未回答の問題を一覧、それぞれ `@N` 番号つき。`--all` = 全 session 分を session id つきで表示 |
-| `cluo pending clear [--all]` | 自分の session の未回答（+ 旧来の未タグ分）を消去。`--all` = 全 session を一括消去 |
-| `cluo stats` | スコアボード表示（言語・正解率・連勝・覚えた単語） |
-| `cluo lang <言語>` | 練習するターゲット言語を設定（例 `cluo lang Japanese`） |
+| `cluo answer <答え>` | 現在の保留中の問題に回答（即採点）。答えなし = 未回答を確認 |
+| `cluo stats` | スコアボード —— 言語・正解率・連勝・覚えた単語 |
+
+**設定（一度設定すれば忘れてOK）**
+
+| コマンド | 効果 |
+|---|---|
+| `cluo lang <言語>` | 練習するターゲット言語（例 `cluo lang Japanese`） |
 | `cluo native <言語>` | 母語を設定（デフォルト Chinese） |
 | `cluo on` / `cluo off` | コンパニオンを有効 / 無効 |
 | `cluo preset chill\|normal\|hardcore` | `chill` = タスクごと 20%；`normal`/`hardcore` = 毎タスク |
-| `cluo set mode every\|freq\|chance` | トリガーモード |
-| `cluo set freq <N>` | `freq` モードで N プロンプトごとに出題 |
-| `cluo set chance <0-100>` | `chance` モードでプロンプトごとの確率 % |
-| `cluo set scope all\|session` | `cluo answer` のデフォルト範囲。`all` = 全 session 対象（`--all` 不要）；`session` = この session のみ（デフォルト） |
+| `cluo set mode every\|freq\|chance` · `set freq <N>` · `set chance <0-100>` | クイズのタイミングを細かく設定 |
 | `cluo reset` | スコアボードをリセット（設定は保持） |
-| `cluo ask <答え> [解説] [問題]` · `cluo grade correct\|wrong` · `cluo word <語句>` | Claude が出題・採点時に呼び出す（pending はキューで多問が衝突しない） |
+
+<details>
+<summary><b>上級 —— 積み残しが溜まったときだけ</b>（通常使用では不要です）</summary>
+
+多くの問題が溜まった場合（例：並列 session を走らせて答えずに終了した場合など）、これらで一括処理できます。
+
+| コマンド | 効果 |
+|---|---|
+| `cluo pending [--all]` | 未回答の問題を一覧、各 `@N` 番号付き。`--all` = 全 session 分を session id つきで表示 |
+| `cluo answer @N <答え>` | `@N` 番号で**特定の**問題に回答 —— 古い問題を先に答えることも可能 |
+| `cluo answer @N=ans [@M=ans …]` | **一括：** 一度の呼び出しで複数の問題を採点。すべての `@N` はいずれかがポップされる前に解決される；複数語の答えは引用符あり・なし両方で動作 |
+| `cluo answer --all [@N] [answer]` | **全** session の積み残しに対応（終了した session の孤立問題も消化） |
+| `cluo answer --mine [@N] [answer]` | **この** session のみに限定（`scope=all` を上書き） |
+| `cluo set scope all\|session` | `cluo answer` のデフォルト範囲（デフォルト `session`） |
+| `cluo pending clear [--all]` | 自分の未回答を消去；`--all` = 全 session を一括消去 |
+
+</details>
+
+<sub>Claude が呼び出すもの（あなたではない）：`cluo ask` / `cluo grade` / `cluo word`（pending はキュー）。</sub>
 
 ## 言語
 

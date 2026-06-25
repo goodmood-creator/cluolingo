@@ -70,28 +70,50 @@ cd cluolingo
 
 ## CLI 指令(`cluo`)
 
-在 Claude Code 裡用零 token 的 `!` 前綴執行,例如 `! cluo stats`。
+基本上用不到這裡。當一題快速小考彈出來,**直接在聊天裡回答就好** —— Claude 會當場批改並記分,完全不需要任何指令。想要零 token、即刻計分的回覆?用 `!` shell 前綴:
+
+```
+! cluo answer pagination
+```
+
+這就是整個日常循環:一道題,一個答案。其他都是偶發需求。
+
+**日常使用**
 
 | 指令 | 作用 |
 |---|---|
-| `cluo answer [答案]` | 回答你**最近一題**待答題目(當場計分)。**不帶答案 = 偷看**你這個 session 有哪些待答 |
-| `cluo answer @N [answer]` | 按編號回答**指定**的一題(從 1 起,即 `pending`/偷看所示的 `@N`)—— 可先答較早的題 |
-| `cluo answer --all [@N] [answer]` | 本次呼叫:覆蓋**所有** session 的積壓題目(清掉已結束 session 留下的孤立題) |
-| `cluo answer --mine [@N] [answer]` | 本次呼叫:只限**此** session(覆蓋 `scope=all`) |
-| `cluo answer @N=ans [@M=ans …]` | **批量：** 一次呼叫為多道待答題評分。所有 `@N` 在彈出任何一題前統一按當前編號解析；多字答案加不加引號均可 |
-| `cluo pending [--all]` | 列出你的待答題目,每題標 `@N` 編號。`--all` = 列出每個 session 的,各標 session id |
-| `cluo pending clear [--all]` | 清掉你這個 session 的待答題(+無主舊題)。`--all` = 全 session 清空 |
-| `cluo stats` | 顯示計分板(語言、正確率、連勝、學過的字) |
-| `cluo lang <語言>` | 設定目標練習語言(例 `cluo lang Japanese`) |
-| `cluo native <語言>` | 設定你的母語(預設 Chinese) |
+| `cluo answer <答案>` | 回答目前待答題目(當場計分)。不帶答案 = 偷看有哪些題待答 |
+| `cluo stats` | 計分板 —— 語言、正確率、連勝、學過的字 |
+
+**設定(設一次,不用再管)**
+
+| 指令 | 作用 |
+|---|---|
+| `cluo lang <語言>` | 目標練習語言(例 `cluo lang Japanese`) |
+| `cluo native <語言>` | 你的母語(預設 Chinese) |
 | `cluo on` / `cluo off` | 啟用 / 停用陪練 |
 | `cluo preset chill\|normal\|hardcore` | `chill` = 每任務 20% 機率;`normal`/`hardcore` = 每任務都考 |
-| `cluo set mode every\|freq\|chance` | 觸發模式 |
-| `cluo set freq <N>` | `freq` 模式下每 N 則 prompt 考一次 |
-| `cluo set chance <0-100>` | `chance` 模式下每則 prompt 的觸發機率 % |
-| `cluo set scope all\|session` | `cluo answer` 的預設範圍。`all` = 覆蓋所有 session(無需帶 `--all`)；`session` = 僅此 session(預設) |
+| `cluo set mode every\|freq\|chance` · `set freq <N>` · `set chance <0-100>` | 精調小考觸發時機 |
 | `cluo reset` | 重置計分板(保留設定) |
-| `cluo ask <答案> [解說] [題目]` · `cluo grade correct\|wrong` · `cluo word <字詞>` | 由 Claude 出題/批改時呼叫(pending 是佇列,多題不互蓋) |
+
+<details>
+<summary><b>進階 —— 僅在積壓題目堆多時才需要</b>(正常使用永遠不需要這些)</summary>
+
+如果積壓了很多題(例如跑了多個並行 session 卻沒跟著答),這些指令讓你把題消化掉。
+
+| 指令 | 作用 |
+|---|---|
+| `cluo pending [--all]` | 列出待答題目,每題標 `@N` 編號。`--all` = 每個 session 的,各標 session id |
+| `cluo answer @N <答案>` | 按 `@N` 編號回答**指定**一題 —— 可先答較早的題 |
+| `cluo answer @N=ans [@M=ans …]` | **批量：** 一次為多題評分。所有 `@N` 在彈出任何一題前統一按當前編號解析；多字答案加不加引號均可 |
+| `cluo answer --all [@N] [answer]` | 覆蓋**所有** session 的積壓題(清掉已結束 session 留下的孤立題) |
+| `cluo answer --mine [@N] [answer]` | 本次呼叫只限**此** session(覆蓋 `scope=all`) |
+| `cluo set scope all\|session` | `cluo answer` 的預設範圍(預設 `session`) |
+| `cluo pending clear [--all]` | 清掉你的待答題;`--all` = 全 session 清空 |
+
+</details>
+
+<sub>由 Claude 呼叫,不由你呼叫:`cluo ask` / `cluo grade` / `cluo word`(pending 是佇列)。</sub>
 
 ## 語言
 
