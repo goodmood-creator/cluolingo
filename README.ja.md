@@ -78,6 +78,7 @@ Claude Code 内でトークン消費ゼロの `!` 接頭辞で実行します（
 | `cluo answer @N [answer]` | 番号を指定して**特定の**問題に回答（1始まり、`pending`/プレビューに表示される `@N`）—— 古い問題を先に答えることも可能 |
 | `cluo answer --all [@N] [answer]` | この呼び出し：**全** session の積み残しに対応（終了した session に残った孤立問題も消化） |
 | `cluo answer --mine [@N] [answer]` | この呼び出し：**この** session のみに限定（`scope=all` を上書き） |
+| `cluo answer @N=ans [@M=ans …]` | **一括：** 一度の呼び出しで複数の問題を採点。すべての `@N` はいずれかがポップされる前に現在の番号で解決される；複数語の答えは引用符あり・なし両方で動作 |
 | `cluo pending [--all]` | 未回答の問題を一覧、それぞれ `@N` 番号つき。`--all` = 全 session 分を session id つきで表示 |
 | `cluo pending clear [--all]` | 自分の session の未回答（+ 旧来の未タグ分）を消去。`--all` = 全 session を一括消去 |
 | `cluo stats` | スコアボード表示（言語・正解率・連勝・覚えた単語） |

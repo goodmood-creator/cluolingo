@@ -122,6 +122,56 @@ case "$cmd" in
     if [ "$#" -gt 0 ] && printf '%s' "$1" | grep -qE '^@[0-9]+$'; then
       sel="${1#@}"; shift
     fi
+    # ── Batch mode: one or more `@N=answer` pairs in a single call. We resolve ALL
+    # target indices against the CURRENT numbering FIRST, then grade and pop them
+    # together, so popping one never renumbers the others (off-by-one). A bare arg
+    # after a pair is appended to its answer, so multi-word answers work even
+    # unquoted (e.g. @1=fix in place). Honors the same scope as single answers.
+    if [ "$#" -gt 0 ] && printf '%s' "$1" | grep -qE '^@[0-9]+='; then
+      nums=(); anss=(); cur=-1
+      for tok in "$@"; do
+        if [[ "$tok" =~ ^@([0-9]+)=(.*)$ ]]; then
+          nums+=("${BASH_REMATCH[1]}"); anss+=("${BASH_REMATCH[2]}"); cur=$(( ${#nums[@]} - 1 ))
+        elif [ "$cur" -ge 0 ]; then
+          anss[$cur]="${anss[$cur]} $tok"
+        fi
+      done
+      # Scope-filtered list of real .pending indices, in display order, so @N maps
+      # the same way peek does. Read into a bash array (no mapfile — bash 3.2).
+      order="$(jq -c --arg s "$sid" --argjson all "$allf" '
+        (((.pending // []) | if type=="object" then [.] else . end))
+        | [ to_entries[] | select(($all==1) or ($s=="") or (.value.session==$s) or ((.value.session // "")=="")) | .key ]' "$STATE_FILE")"
+      omap=(); while IFS= read -r _k; do omap+=("$_k"); done < <(printf '%s' "$order" | jq -r '.[]')
+      streak="$(jq -r '.streak' "$STATE_FILE")"; best="$(jq -r '.best_streak' "$STATE_FILE")"
+      gq=0; gc=0; rmset=(); i=0
+      while [ "$i" -lt "${#nums[@]}" ]; do
+        n="${nums[$i]}"; a="${anss[$i]}"; i=$((i+1))
+        if [ "$n" -lt 1 ] || [ "$n" -gt "${#omap[@]}" ]; then
+          echo "@$n  ⚠ no such open question (skipped)"; continue
+        fi
+        ridx="${omap[$((n-1))]}"
+        tgt="$(jq -c --argjson k "$ridx" '(((.pending // []) | if type=="object" then [.] else . end))[$k]' "$STATE_FILE")"
+        pa="$(printf '%s' "$tgt" | jq -r '.answer // empty')"
+        if [ "$(_norm "$a")" = "$(_norm "$pa")" ]; then
+          echo "@$n  ✅ correct  ($pa)"; gc=$((gc+1)); streak=$((streak+1))
+          if [ "$streak" -gt "$best" ]; then best="$streak"; fi
+        else
+          echo "@$n  ❌ was: $pa"; streak=0
+        fi
+        gq=$((gq+1)); rmset+=("$ridx")
+      done
+      if [ "$gq" -gt 0 ]; then
+        setjson="$(printf '%s\n' "${rmset[@]}" | jq -s '.')"
+        _save --argjson gq "$gq" --argjson gc "$gc" --argjson st "$streak" --argjson bs "$best" --argjson rm "$setjson" '
+          .pending = ((.pending // []) | if type=="object" then [.] else . end)
+          | .quiz_count += $gq | .correct += $gc | .streak = $st | .best_streak = $bs
+          | .pending = [ .pending | to_entries[] | select((.key as $k | $rm | index($k)) | not) | .value ]'
+      fi
+      rem="$(jq --arg s "$sid" --argjson all "$allf" '(((.pending // []) | if type=="object" then [.] else . end))
+             | map(select(($all==1) or ($s=="") or (.session==$s) or ((.session // "")==""))) | length' "$STATE_FILE")"
+      echo "batch: $gq graded, $gc correct  (streak: $streak; $rem still open $scope_note)"
+      exit 0
+    fi
     u="${*:-}"
     if [ -z "$u" ]; then
       # No answer given → peek mode: show the open questions in the chosen scope so
@@ -248,6 +298,7 @@ Usage: cluo <command> [args]
   answer @N [text]         answer a SPECIFIC open question by its listed number (1-based)
   answer --all [@N] [text] this call: reach EVERY session's backlog (drain orphaned questions)
   answer --mine [@N] [text] this call: limit to THIS session (overrides scope=all)
+  answer @N=ans [@M=ans …]  batch: grade several open questions in one call (multi-word ok)
   pending [--all]          list your open questions (--all = every session, tagged)
   pending clear [--all]    clear your session's open questions (--all = all sessions)
   grade correct|wrong      record an answer (called by Claude)

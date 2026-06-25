@@ -78,6 +78,7 @@ Run with the zero-token `!` shell prefix inside Claude Code, e.g. `! cluo stats`
 | `cluo answer @N [answer]` | Answer a **specific** open question by its listed number (1-based, as shown by peek/`pending`) — lets you answer older ones first |
 | `cluo answer --all [@N] [answer]` | This call: reach **every** session's backlog (drain orphaned questions left by finished sessions) |
 | `cluo answer --mine [@N] [answer]` | This call: limit to **this** session (overrides `scope=all`) |
+| `cluo answer @N=ans [@M=ans …]` | **Batch:** grade several open questions in one call. All `@N` resolve against current numbering before any are popped; multi-word answers work quoted or not |
 | `cluo pending [--all]` | List your open questions, each numbered `@N`. `--all` = every session's, each tagged by session id |
 | `cluo pending clear [--all]` | Clear your session's open questions (+ legacy untagged). `--all` = wipe every session's |
 | `cluo stats` | Show scoreboard (language, accuracy, streak, words learned) |

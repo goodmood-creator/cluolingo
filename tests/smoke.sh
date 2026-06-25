@@ -107,6 +107,22 @@ printf '%s' "$A6DM" | grep -q "qMine" || fail "--mine should limit peek to this 
 "$CLUO" set scope bogus 2>/dev/null && fail "set scope bogus should be rejected"
 "$CLUO" set scope session >/dev/null
 
+# 6e. batch @N=ans grades several at once; indices resolve BEFORE any pop (no off-by-one)
+"$CLUO" reset >/dev/null
+"$CLUO" ask "yourself"     "x" "b1" >/dev/null
+"$CLUO" ask "commit"       "x" "b2" >/dev/null
+"$CLUO" ask "fix in place" "x" "b3" >/dev/null
+"$CLUO" ask "ends"         "x" "b4" >/dev/null
+"$CLUO" ask "delegate"     "x" "b5" >/dev/null
+# @1 right, @3 right (multi-word, UNQUOTED), @4 wrong, @9 invalid (skipped, uncounted)
+A6E="$("$CLUO" answer @1=yourself @3=fix in place @4=wrongo @9=nope)"
+printf '%s' "$A6E" | grep -q "3 graded, 2 correct" || fail "batch should grade 3 (skip invalid @9), 2 correct"
+printf '%s' "$A6E" | grep -q "no such open question" || fail "batch should report the invalid @9 as skipped"
+# the RIGHT three were popped (b1,b3,b4), leaving exactly b2 + b5 — proves pre-resolution
+[ "$(jq -r '[.pending[].q] | join(",")' "$SANDBOX/cluolingo/state.json")" = "b2,b5" ] || fail "batch must pop the resolved indices, not shifted ones (expected b2,b5)"
+[ "$(jq -r '.quiz_count' "$SANDBOX/cluolingo/state.json")" = "3" ] || fail "batch must count exactly 3 graded (invalid not counted)"
+[ "$(jq -r '.correct' "$SANDBOX/cluolingo/state.json")" = "2" ] || fail "batch must count 2 correct"
+
 # 7. session scoping: a session answers ITS question, not another session's newer one
 "$CLUO" reset >/dev/null
 CLAUDE_CODE_SESSION_ID="sessA" "$CLUO" ask "apple" "x" "qA" >/dev/null

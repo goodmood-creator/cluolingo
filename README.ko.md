@@ -78,6 +78,7 @@ Claude Code 안에서 토큰 소비가 없는 `!` 접두사로 실행하세요. 
 | `cluo answer @N [answer]` | 번호로 **특정** 문제에 답변（1-기반, `pending`/미리보기에 표시되는 `@N`）—— 오래된 문제를 먼저 답할 수 있음 |
 | `cluo answer --all [@N] [answer]` | 이 호출: **모든** session의 미답 문제에 접근（종료된 session에 남은 고아 문제 처리） |
 | `cluo answer --mine [@N] [answer]` | 이 호출: **이** session으로만 제한（`scope=all` 무시） |
+| `cluo answer @N=ans [@M=ans …]` | **일괄：** 한 번의 호출로 여러 문제를 채점. 모든 `@N`은 하나가 팝되기 전에 현재 번호 기준으로 해석됨; 여러 단어 답변은 따옴표 유무 관계없이 동작 |
 | `cluo pending [--all]` | 미답 문제를 목록으로 표시, 각 문제에 `@N` 번호 붙음. `--all` = 모든 session 것, 각각 session id 표기 |
 | `cluo stats` | 점수판 표시(언어, 정답률, 연승, 배운 단어) |
 | `cluo lang <언어>` | 연습할 대상 언어 설정(예: `cluo lang Japanese`) |

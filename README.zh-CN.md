@@ -78,6 +78,7 @@ cd cluolingo
 | `cluo answer @N [answer]` | 按编号答**指定**一题（从 1 起，即 `pending`/偷看列出的 `@N`）—— 可先答旧题 |
 | `cluo answer --all [@N] [answer]` | 本次调用：覆盖**全部** session 的积压题目（清掉已退出 session 留下的孤立题） |
 | `cluo answer --mine [@N] [answer]` | 本次调用：只限**当前** session（覆盖 `scope=all`） |
+| `cluo answer @N=ans [@M=ans …]` | **批量：** 一次调用为多道待答题评分。所有 `@N` 在弹出任意一题前统一按当前编号解析；多词答案加不加引号均可 |
 | `cluo pending [--all]` | 列出你的待答题目，每题标 `@N` 编号。`--all` = 列出每个 session 的，各标 session id |
 | `cluo stats` | 显示记分板(语言、正确率、连胜、学过的词) |
 | `cluo lang <语言>` | 设置目标练习语言(例 `cluo lang Japanese`) |

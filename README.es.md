@@ -78,6 +78,7 @@ Ejecuta con el prefijo de shell `!` (cero tokens) dentro de Claude Code, p. ej. 
 | `cluo answer @N [answer]` | Responde una pregunta **específica** por su número listado (base 1, según `pending`/vista previa) — permite responder las más antiguas primero |
 | `cluo answer --all [@N] [answer]` | Esta llamada: abarca el pendiente de **todas** las sesiones (limpia preguntas huérfanas de sesiones terminadas) |
 | `cluo answer --mine [@N] [answer]` | Esta llamada: limita a **esta** sesión (anula `scope=all`) |
+| `cluo answer @N=ans [@M=ans …]` | **Lote:** puntúa varias preguntas abiertas en una sola llamada. Todos los `@N` se resuelven con la numeración actual antes de eliminar cualquiera; las respuestas de varias palabras funcionan con o sin comillas |
 | `cluo pending [--all]` | Lista tus preguntas abiertas, cada una numerada con `@N`. `--all` = las de todas las sesiones, etiquetadas con su session id |
 | `cluo stats` | Muestra el marcador (idioma, precisión, racha, palabras aprendidas) |
 | `cluo lang <idioma>` | Define el idioma objetivo de práctica (p. ej. `cluo lang Japanese`) |
