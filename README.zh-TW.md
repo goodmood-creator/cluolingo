@@ -75,7 +75,10 @@ cd cluolingo
 | 指令 | 作用 |
 |---|---|
 | `cluo answer [答案]` | 回答你**最近一題**待答題目(當場計分)。**不帶答案 = 偷看**你這個 session 有哪些待答 |
-| `cluo pending [--all]` | 列出你的待答題目。`--all` = 列出每個 session 的,各標 session id 末四碼 |
+| `cluo answer @N [answer]` | 按編號回答**指定**的一題(從 1 起,即 `pending`/偷看所示的 `@N`)—— 可先答較早的題 |
+| `cluo answer --all [@N] [answer]` | 本次呼叫:覆蓋**所有** session 的積壓題目(清掉已結束 session 留下的孤立題) |
+| `cluo answer --mine [@N] [answer]` | 本次呼叫:只限**此** session(覆蓋 `scope=all`) |
+| `cluo pending [--all]` | 列出你的待答題目,每題標 `@N` 編號。`--all` = 列出每個 session 的,各標 session id |
 | `cluo pending clear [--all]` | 清掉你這個 session 的待答題(+無主舊題)。`--all` = 全 session 清空 |
 | `cluo stats` | 顯示計分板(語言、正確率、連勝、學過的字) |
 | `cluo lang <語言>` | 設定目標練習語言(例 `cluo lang Japanese`) |
@@ -85,6 +88,7 @@ cd cluolingo
 | `cluo set mode every\|freq\|chance` | 觸發模式 |
 | `cluo set freq <N>` | `freq` 模式下每 N 則 prompt 考一次 |
 | `cluo set chance <0-100>` | `chance` 模式下每則 prompt 的觸發機率 % |
+| `cluo set scope all\|session` | `cluo answer` 的預設範圍。`all` = 覆蓋所有 session(無需帶 `--all`)；`session` = 僅此 session(預設) |
 | `cluo reset` | 重置計分板(保留設定) |
 | `cluo ask <答案> [解說] [題目]` · `cluo grade correct\|wrong` · `cluo word <字詞>` | 由 Claude 出題/批改時呼叫(pending 是佇列,多題不互蓋) |
 

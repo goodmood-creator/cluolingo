@@ -60,6 +60,53 @@ printf '%s' "$A1" | grep -q "correct" || fail "LIFO should grade the most recent
 A2="$("$CLUO" answer "alpha")"
 printf '%s' "$A2" | grep -q "correct" || fail "remaining question (alpha) should grade correct"
 
+# 6b. @N selector answers a SPECIFIC open question (oldest first), not just the newest
+"$CLUO" reset >/dev/null
+"$CLUO" ask "alpha" "first/oldest" "q1" >/dev/null
+"$CLUO" ask "beta"  "second"       "q2" >/dev/null
+"$CLUO" ask "gamma" "third/newest" "q3" >/dev/null
+A6B="$("$CLUO" answer @1 alpha)"   # @1 = oldest, newest-last numbering
+printf '%s' "$A6B" | grep -q "correct" || fail "@1 should grade the oldest question (alpha)"
+[ "$(jq -r '.pending | length' "$SANDBOX/cluolingo/state.json")" = "2" ] || fail "@N answer should pop exactly one question"
+[ "$(jq -r '[.pending[].answer] | sort | join(",")' "$SANDBOX/cluolingo/state.json")" = "beta,gamma" ] || fail "@1 must remove the oldest, leaving beta+gamma"
+A6BAD="$("$CLUO" answer @9 nope)"  # out-of-range index is rejected, scores nothing
+printf '%s' "$A6BAD" | grep -q "no open question @9" || fail "out-of-range @N should be rejected"
+[ "$(jq -r '.pending | length' "$SANDBOX/cluolingo/state.json")" = "2" ] || fail "rejected @N must not pop anything"
+
+# 6c. --all drains orphaned backlog cross-session; default scope still can't reach it
+"$CLUO" reset >/dev/null
+CLAUDE_CODE_SESSION_ID="oldA" "$CLUO" ask "alpha" "fromA" "qA1" >/dev/null
+CLAUDE_CODE_SESSION_ID="oldA" "$CLUO" ask "beta"  "fromA" "qA2" >/dev/null
+CLAUDE_CODE_SESSION_ID="oldB" "$CLUO" ask "gamma" "fromB" "qB1" >/dev/null
+# a fresh session has nothing of its own → session-scoped answer sees nothing
+A6C0="$(CLAUDE_CODE_SESSION_ID="newC" "$CLUO" answer "alpha")"
+printf '%s' "$A6C0" | grep -q "no pending question for you" || fail "fresh session must not reach orphaned backlog without --all"
+[ "$(jq -r '.pending | length' "$SANDBOX/cluolingo/state.json")" = "3" ] || fail "session-scoped answer must not pop an orphan"
+# --all @1 grades the oldest orphan regardless of session
+A6C1="$(CLAUDE_CODE_SESSION_ID="newC" "$CLUO" answer --all @1 alpha)"
+printf '%s' "$A6C1" | grep -q "correct" || fail "--all @1 should grade the oldest orphan (alpha)"
+[ "$(jq -r '[.pending[].answer] | sort | join(",")' "$SANDBOX/cluolingo/state.json")" = "beta,gamma" ] || fail "--all @1 must remove only the oldest orphan"
+# out-of-range --all index scores nothing
+A6C2="$(CLAUDE_CODE_SESSION_ID="newC" "$CLUO" answer --all @9 nope)"
+printf '%s' "$A6C2" | grep -q "no open question @9 anywhere" || fail "out-of-range --all @N should be rejected"
+[ "$(jq -r '.pending | length' "$SANDBOX/cluolingo/state.json")" = "2" ] || fail "rejected --all @N must not pop anything"
+
+# 6d. persisted answer_scope=all makes a bare `answer` reach every session; --mine overrides
+"$CLUO" reset >/dev/null
+CLAUDE_CODE_SESSION_ID="oldA" "$CLUO" ask "alpha" "fromA" "qA1" >/dev/null
+CLAUDE_CODE_SESSION_ID="me"   "$CLUO" ask "mine"  "fromMe" "qMine" >/dev/null
+"$CLUO" set scope all >/dev/null
+[ "$(jq -r '.answer_scope' "$SANDBOX/cluolingo/state.json")" = "all" ] || fail "set scope all should persist"
+# under scope=all, a bare (flagless) answer reaches the orphaned question
+A6D="$(CLAUDE_CODE_SESSION_ID="me" "$CLUO" answer @1 alpha)"
+printf '%s' "$A6D" | grep -q "correct" || fail "scope=all: bare @1 should reach orphaned alpha without --all"
+[ "$(jq -r '[.pending[].answer] | join(",")' "$SANDBOX/cluolingo/state.json")" = "mine" ] || fail "scope=all @1 must pop the orphan, leaving mine"
+# --mine overrides back to session scope even when default is all
+A6DM="$(CLAUDE_CODE_SESSION_ID="me" "$CLUO" answer --mine)"
+printf '%s' "$A6DM" | grep -q "qMine" || fail "--mine should limit peek to this session"
+"$CLUO" set scope bogus 2>/dev/null && fail "set scope bogus should be rejected"
+"$CLUO" set scope session >/dev/null
+
 # 7. session scoping: a session answers ITS question, not another session's newer one
 "$CLUO" reset >/dev/null
 CLAUDE_CODE_SESSION_ID="sessA" "$CLUO" ask "apple" "x" "qA" >/dev/null

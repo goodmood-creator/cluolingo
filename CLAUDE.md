@@ -27,8 +27,10 @@ Two parts that never call each other directly — they communicate only through 
 - Called by **Claude** (`ask` to queue a question; `grade`/`word` when grading a chat reply) and by **the user** (`answer`, `stats`, settings). Run inside Claude Code with the zero-token `!` prefix, e.g. `! cluo answer pagination`.
 - State: `$CLAUDE_CONFIG_DIR/cluolingo/state.json` (default `~/.claude/cluolingo/`). All writes are atomic (`mktemp` + `mv`).
 
-**State shape** (single JSON file): `enabled, mode, freq, chance, target_lang, native_lang, prompt_count, quiz_count, correct, streak, best_streak, pending, words_seen`.
+**State shape** (single JSON file): `enabled, mode, freq, chance, target_lang, native_lang, answer_scope, prompt_count, quiz_count, correct, streak, best_streak, pending, words_seen`.
 - `pending` is a **QUEUE** of `{answer, explain, q, session}`, not a single slot — so concurrent sessions/agents each `cluo ask` without clobbering. Each item is tagged with `$CLAUDE_CODE_SESSION_ID` at `ask` time; **`cluo answer` grades the current session's most-recent item** and pops it (falls back to global most-recent when no session id is set; legacy untagged items stay answerable by anyone). This session-scoping is what makes parallel sessions answer their OWN quizzes instead of each other's.
+- **Answering a specific / older question:** `cluo answer @N` targets the N-th open question (1-based, the number peek/`pending` print — newest last), instead of the most-recent. The `@` prefix is deliberate: `#` is a shell comment and a bare integer would collide with numeric answers.
+- **Scope** (`answer_scope`, `session`|`all`, default `session`): which sessions' questions `cluo answer` can reach. `cluo answer --all` widens a single call to **every** session's backlog (to drain orphans left by finished sessions); `--mine`/`--session` narrows a single call back. `cluo set scope all|session` changes the persisted default; the per-call flag always overrides it. `--all` is the only thing that lets one session answer another's questions, so the parallel-isolation invariant holds unless explicitly opted out.
 
 ## Non-obvious invariants (don't regress these)
 

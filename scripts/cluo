@@ -22,7 +22,7 @@ mkdir -p "$STATE_DIR"
 if [ ! -f "$STATE_FILE" ]; then
   cat > "$STATE_FILE" <<'JSON'
 { "enabled": true, "mode": "every", "freq": 5, "chance": 30,
-  "target_lang": "English", "native_lang": "Chinese",
+  "target_lang": "English", "native_lang": "Chinese", "answer_scope": "session",
   "prompt_count": 0, "quiz_count": 0, "correct": 0,
   "streak": 0, "best_streak": 0, "pending": [], "words_seen": [] }
 JSON
@@ -44,6 +44,7 @@ case "$cmd" in
     jq -r '
       "🦉 Cluolingo — scoreboard",
       "  status   : \(if .enabled then "on" else "off" end)  (mode: \(.mode))",
+      "  scope    : \(.answer_scope // "session")  (answer reaches \(if (.answer_scope // "session")=="all" then "all sessions" else "this session only" end))",
       "  learning : \(.target_lang)  (from \(.native_lang))",
       "  asked    : \(.quiz_count)   correct: \(.correct)",
       "  accuracy : \(if .quiz_count>0 then ((.correct*100/.quiz_count)|floor|tostring)+"%" else "—" end)",
@@ -97,26 +98,59 @@ case "$cmd" in
     ;;
   answer)
     sid="${CLAUDE_CODE_SESSION_ID:-}"
+    # Scope decides whose questions you can answer. The default comes from the
+    # persisted answer_scope setting (session|all, see `cluo set scope`); a per-call
+    # --all / --mine flag overrides it. all = drain EVERY session's backlog (orphaned
+    # questions left by finished sessions); session = only this session's, so live
+    # parallel sessions never answer each other's questions.
+    dscope="$(jq -r '.answer_scope // "session"' "$STATE_FILE")"
+    [ "$dscope" = "all" ] && allf=1 || allf=0
+    case "${1:-}" in
+      --all)            allf=1; shift ;;
+      --mine|--session) allf=0; shift ;;
+    esac
+    # `flag` = what you'd retype to STAY in this scope (empty when it matches the
+    # default, so hints stay clean); scope_note feeds the human-facing messages.
+    if [ "$allf" = 1 ]; then scope_note="anywhere"; [ "$dscope" = "all" ] && flag="" || flag=" --all"
+    else scope_note="for you"; [ "$dscope" = "all" ] && flag=" --mine" || flag=""; fi
+    peek_cmd="cluo answer$flag"
+    # Optional @N selector: answer a SPECIFIC open question by its listed number
+    # (1-based, newest last — the same numbering peek/pending show). We use an @
+    # prefix because '#' is a shell comment and a bare integer would collide with
+    # answers that are themselves numbers.
+    sel=""
+    if [ "$#" -gt 0 ] && printf '%s' "$1" | grep -qE '^@[0-9]+$'; then
+      sel="${1#@}"; shift
+    fi
     u="${*:-}"
     if [ -z "$u" ]; then
-      # No answer given → peek mode: show THIS session's open questions so you can
-      # see exactly what you're being asked before you reply.
-      jq -r --arg s "$sid" '
+      # No answer given → peek mode: show the open questions in the chosen scope so
+      # you can see exactly what you're being asked before you reply.
+      jq -r --arg s "$sid" --argjson all "$allf" --arg flag "$flag" '
         (((.pending // []) | if type=="object" then [.] else . end))
-        | map(select(($s=="") or (.session==$s) or ((.session // "")=="")))
-        | if length==0 then "🤔 nothing pending for you right now"
-          else "📋 \(length) open for you (newest last) — answer with: cluo answer <ans>",
-               (to_entries[] | "   • \(.value.q // ("answer: "+.value.answer))")
+        | map(select(($all==1) or ($s=="") or (.session==$s) or ((.session // "")=="")))
+        | if length==0 then (if $all==1 then "🤔 nothing pending anywhere" else "🤔 nothing pending for you right now" end)
+          else "📋 \(length) open\(if $all==1 then " (all sessions)" else " for you" end) (newest last) — newest: cluo answer\($flag) <ans>  ·  a specific one: cluo answer\($flag) @N <ans>",
+               (to_entries[] | "   @\(.key+1)  \(.value.q // ("answer: "+.value.answer))")
           end' "$STATE_FILE"
       exit 0
     fi
-    # Grade THIS session's most-recent question (plus any legacy untagged one).
-    # If no session id is known, fall back to the global most-recent (LIFO).
-    idx="$(jq --arg s "$sid" '
-      (((.pending // []) | if type=="object" then [.] else . end))
-      | [ to_entries[] | select(($s=="") or (.value.session==$s) or ((.value.session // "")=="")) | .key ]
-      | (last // -1)' "$STATE_FILE")"
-    [ "$idx" != "-1" ] || { echo "🤔 no pending question for you right now"; exit 0; }
+    # Pick the target index in .pending. An explicit @N maps a 1-based position in
+    # the chosen scope's list back to its real index; no @N grades that scope's
+    # most-recent question (LIFO).
+    if [ -n "$sel" ]; then
+      idx="$(jq --arg s "$sid" --argjson all "$allf" --argjson n "$sel" '
+        (((.pending // []) | if type=="object" then [.] else . end))
+        | [ to_entries[] | select(($all==1) or ($s=="") or (.value.session==$s) or ((.value.session // "")=="")) | .key ]
+        | (.[$n-1] // -1)' "$STATE_FILE")"
+      [ "$idx" != "-1" ] || { echo "🤔 no open question @$sel $scope_note (peek with: $peek_cmd)"; exit 0; }
+    else
+      idx="$(jq --arg s "$sid" --argjson all "$allf" '
+        (((.pending // []) | if type=="object" then [.] else . end))
+        | [ to_entries[] | select(($all==1) or ($s=="") or (.value.session==$s) or ((.value.session // "")=="")) | .key ]
+        | (last // -1)' "$STATE_FILE")"
+      [ "$idx" != "-1" ] || { echo "🤔 no pending question $scope_note right now"; exit 0; }
+    fi
     tgt="$(jq -c --argjson i "$idx" '(((.pending // []) | if type=="object" then [.] else . end))[$i]' "$STATE_FILE")"
     pa="$(printf '%s' "$tgt" | jq -r '.answer // empty')"
     pe="$(printf '%s' "$tgt" | jq -r '.explain // empty')"
@@ -134,9 +168,9 @@ case "$cmd" in
       echo "❌ not quite — the answer was: $pa"
     fi
     [ -n "$pe" ] && echo "   💡 $pe"
-    rem="$(jq --arg s "$sid" '(((.pending // []) | if type=="object" then [.] else . end))
-           | map(select(($s=="") or (.session==$s) or ((.session // "")==""))) | length' "$STATE_FILE")"
-    if [ "$rem" -gt 0 ]; then echo "   ($rem more open for you — answer the next with: cluo answer <ans>)"; fi
+    rem="$(jq --arg s "$sid" --argjson all "$allf" '(((.pending // []) | if type=="object" then [.] else . end))
+           | map(select(($all==1) or ($s=="") or (.session==$s) or ((.session // "")==""))) | length' "$STATE_FILE")"
+    if [ "$rem" -gt 0 ]; then echo "   ($rem more open $scope_note — answer the next with: $peek_cmd <ans>)"; fi
     ;;
   pending)
     sid="${CLAUDE_CODE_SESSION_ID:-}"
@@ -158,19 +192,19 @@ case "$cmd" in
       jq -r '
         (((.pending // []) | if type=="object" then [.] else . end)) as $all
         | if ($all|length)==0 then "（nothing pending anywhere）"
-          else "📋 all open questions (\($all|length)):",
+          else "📋 all open questions (\($all|length)) — answer any with: cluo answer --all @N <ans>",
                ($all | to_entries[]
                  | (.value.session // "") as $s
                  | (if ($s|length)>4 then $s[($s|length-4):] elif $s=="" then "----" else $s end) as $tag
-                 | "   [\($tag)] \(.value.q // ("answer: "+.value.answer))")
+                 | "   @\(.key+1)  [\($tag)] \(.value.q // ("answer: "+.value.answer))")
           end' "$STATE_FILE"
     else
       jq -r --arg s "$sid" '
         (((.pending // []) | if type=="object" then [.] else . end)) as $all
         | ($all | map(select(($s=="") or (.session==$s) or ((.session // "")=="")))) as $mine
         | (if ($mine|length)==0 then "（no open questions for you — see all with: cluo pending --all）"
-           else "📋 \(($mine|length)) open for you (newest last):",
-                ($mine | to_entries[] | "   • \(.value.q // ("answer: "+.value.answer))") end),
+           else "📋 \(($mine|length)) open for you (newest last) — answer a specific one with: cluo answer @N <ans>",
+                ($mine | to_entries[] | "   @\(.key+1)  \(.value.q // ("answer: "+.value.answer))") end),
           (if ($all|length) > ($mine|length) then "   (+\(($all|length)-($mine|length)) open in other sessions — cluo pending --all)" else empty end)
       ' "$STATE_FILE"
     fi
@@ -189,7 +223,12 @@ case "$cmd" in
       mode)   case "$val" in every|freq|chance) _save --arg v "$val" '.mode=$v'; echo "mode: $val";; *) echo "mode must be every|freq|chance"; exit 1;; esac ;;
       freq)   _save --argjson v "$val" '.freq=$v'; echo "freq: $val" ;;
       chance) _save --argjson v "$val" '.chance=$v'; echo "chance: $val%" ;;
-      *) echo "usage: cluo set mode|freq|chance <value>"; exit 1 ;;
+      scope)  case "$val" in
+                all)     _save '.answer_scope="all"';     echo "answer scope: all (cluo answer now reaches every session; use --mine to limit to this one)" ;;
+                session) _save '.answer_scope="session"'; echo "answer scope: session (cluo answer only this session; use --all to reach every session)" ;;
+                *) echo "scope must be all|session"; exit 1 ;;
+              esac ;;
+      *) echo "usage: cluo set mode|freq|chance|scope <value>"; exit 1 ;;
     esac
     ;;
   reset)
@@ -206,6 +245,9 @@ Usage: cluo <command> [args]
   native <language>        set your native language (default Chinese)
   ask <answer> [explain] [question]   queue a pending question (called by Claude)
   answer [text]            answer your most recent pending question; no text = peek what's open
+  answer @N [text]         answer a SPECIFIC open question by its listed number (1-based)
+  answer --all [@N] [text] this call: reach EVERY session's backlog (drain orphaned questions)
+  answer --mine [@N] [text] this call: limit to THIS session (overrides scope=all)
   pending [--all]          list your open questions (--all = every session, tagged)
   pending clear [--all]    clear your session's open questions (--all = all sessions)
   grade correct|wrong      record an answer (called by Claude)
@@ -213,6 +255,7 @@ Usage: cluo <command> [args]
   preset chill|normal|hardcore
   set mode every|freq|chance
   set freq <N> | set chance <0-100>
+  set scope all|session    default scope for `cluo answer` (all = every session)
   reset                    reset the scoreboard (keeps settings)
   help | -h | --help       show this help
 USAGE

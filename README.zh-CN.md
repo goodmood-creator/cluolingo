@@ -75,7 +75,10 @@ cd cluolingo
 | 命令 | 作用 |
 |---|---|
 | `cluo answer <答案>` | 回答**最近一题**待答题目(当场计分) |
-| `cluo pending` | 列出未答的题目 |
+| `cluo answer @N [answer]` | 按编号答**指定**一题（从 1 起，即 `pending`/偷看列出的 `@N`）—— 可先答旧题 |
+| `cluo answer --all [@N] [answer]` | 本次调用：覆盖**全部** session 的积压题目（清掉已退出 session 留下的孤立题） |
+| `cluo answer --mine [@N] [answer]` | 本次调用：只限**当前** session（覆盖 `scope=all`） |
+| `cluo pending [--all]` | 列出你的待答题目，每题标 `@N` 编号。`--all` = 列出每个 session 的，各标 session id |
 | `cluo stats` | 显示记分板(语言、正确率、连胜、学过的词) |
 | `cluo lang <语言>` | 设置目标练习语言(例 `cluo lang Japanese`) |
 | `cluo native <语言>` | 设置你的母语(默认 Chinese) |
@@ -84,6 +87,7 @@ cd cluolingo
 | `cluo set mode every\|freq\|chance` | 触发模式 |
 | `cluo set freq <N>` | `freq` 模式下每 N 条 prompt 考一次 |
 | `cluo set chance <0-100>` | `chance` 模式下每条 prompt 的触发概率 % |
+| `cluo set scope all\|session` | `cluo answer` 的默认范围。`all` = 覆盖全部 session(无需每次带 `--all`)；`session` = 仅当前 session(默认) |
 | `cluo reset` | 重置记分板(保留设置) |
 | `cluo ask <答案> [讲解] [题目]` · `cluo grade correct\|wrong` · `cluo word <词语>` | 由 Claude 出题/批改时调用(pending 是队列,多题不互盖) |
 

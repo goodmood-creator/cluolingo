@@ -75,7 +75,10 @@ Claude Code 안에서 토큰 소비가 없는 `!` 접두사로 실행하세요. 
 | 명령어 | 효과 |
 |---|---|
 | `cluo answer <답>` | **가장 최근의** 대기 중인 문제에 답변(즉시 채점) |
-| `cluo pending` | 미답 문제 목록 표시 |
+| `cluo answer @N [answer]` | 번호로 **특정** 문제에 답변（1-기반, `pending`/미리보기에 표시되는 `@N`）—— 오래된 문제를 먼저 답할 수 있음 |
+| `cluo answer --all [@N] [answer]` | 이 호출: **모든** session의 미답 문제에 접근（종료된 session에 남은 고아 문제 처리） |
+| `cluo answer --mine [@N] [answer]` | 이 호출: **이** session으로만 제한（`scope=all` 무시） |
+| `cluo pending [--all]` | 미답 문제를 목록으로 표시, 각 문제에 `@N` 번호 붙음. `--all` = 모든 session 것, 각각 session id 표기 |
 | `cluo stats` | 점수판 표시(언어, 정답률, 연승, 배운 단어) |
 | `cluo lang <언어>` | 연습할 대상 언어 설정(예: `cluo lang Japanese`) |
 | `cluo native <언어>` | 모국어 설정(기본 Chinese) |
@@ -84,6 +87,7 @@ Claude Code 안에서 토큰 소비가 없는 `!` 접두사로 실행하세요. 
 | `cluo set mode every\|freq\|chance` | 트리거 모드 |
 | `cluo set freq <N>` | `freq` 모드에서 N개 프롬프트마다 출제 |
 | `cluo set chance <0-100>` | `chance` 모드에서 프롬프트당 확률 % |
+| `cluo set scope all\|session` | `cluo answer`의 기본 범위. `all` = 모든 session 대상（`--all` 불필요）；`session` = 이 session만（기본값） |
 | `cluo reset` | 점수판 초기화(설정은 유지) |
 | `cluo ask <답> [설명] [문제]` · `cluo grade correct\|wrong` · `cluo word <단어>` | Claude가 출제/채점 시 호출(pending은 큐로 여러 문제가 충돌하지 않음) |
 

@@ -75,7 +75,10 @@ Execute com o prefixo de shell `!` (zero tokens) dentro do Claude Code, ex.: `! 
 | Comando | Efeito |
 |---|---|
 | `cluo answer <resposta>` | Responde **a pergunta pendente mais recente** (pontuada na hora) |
-| `cluo pending` | Lista as perguntas em aberto (não respondidas) |
+| `cluo answer @N [answer]` | Responde uma pergunta **específica** pelo número listado (base 1, conforme exibido em `pending`/visualização) — permite responder as mais antigas primeiro |
+| `cluo answer --all [@N] [answer]` | Esta chamada: abrange o backlog de **todas** as sessões (elimina perguntas órfãs de sessões encerradas) |
+| `cluo answer --mine [@N] [answer]` | Esta chamada: limita a **esta** sessão (sobrescreve `scope=all`) |
+| `cluo pending [--all]` | Lista suas perguntas em aberto, cada uma numerada com `@N`. `--all` = todas as sessões, cada uma com o seu session id |
 | `cluo stats` | Mostra o placar (idioma, precisão, sequência, palavras aprendidas) |
 | `cluo lang <idioma>` | Define o idioma-alvo de prática (ex.: `cluo lang Japanese`) |
 | `cluo native <idioma>` | Define seu idioma nativo (padrão Chinese) |
@@ -84,6 +87,7 @@ Execute com o prefixo de shell `!` (zero tokens) dentro do Claude Code, ex.: `! 
 | `cluo set mode every\|freq\|chance` | Modo de acionamento |
 | `cluo set freq <N>` | No modo `freq`, pergunta a cada N prompts |
 | `cluo set chance <0-100>` | No modo `chance`, probabilidade % por prompt |
+| `cluo set scope all\|session` | Escopo padrão para `cluo answer`. `all` = abrange todas as sessões (sem precisar de `--all`); `session` = só esta sessão (padrão) |
 | `cluo reset` | Reinicia o placar (mantém as configurações) |
 | `cluo ask <resposta> [explicação] [pergunta]` · `cluo grade correct\|wrong` · `cluo word <texto>` | Chamado pelo Claude ao propor/corrigir uma pergunta (pending é uma fila) |
 

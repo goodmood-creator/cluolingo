@@ -75,7 +75,10 @@ Run with the zero-token `!` shell prefix inside Claude Code, e.g. `! cluo stats`
 | Command | Effect |
 |---|---|
 | `cluo answer [answer]` | Answer your most recent pending question (scored instantly). **No answer = peek** what's open for your session |
-| `cluo pending [--all]` | List your open questions. `--all` = every session's, each tagged by session id |
+| `cluo answer @N [answer]` | Answer a **specific** open question by its listed number (1-based, as shown by peek/`pending`) — lets you answer older ones first |
+| `cluo answer --all [@N] [answer]` | This call: reach **every** session's backlog (drain orphaned questions left by finished sessions) |
+| `cluo answer --mine [@N] [answer]` | This call: limit to **this** session (overrides `scope=all`) |
+| `cluo pending [--all]` | List your open questions, each numbered `@N`. `--all` = every session's, each tagged by session id |
 | `cluo pending clear [--all]` | Clear your session's open questions (+ legacy untagged). `--all` = wipe every session's |
 | `cluo stats` | Show scoreboard (language, accuracy, streak, words learned) |
 | `cluo lang <language>` | Set the target practice language (e.g. `cluo lang Japanese`) |
@@ -85,6 +88,7 @@ Run with the zero-token `!` shell prefix inside Claude Code, e.g. `! cluo stats`
 | `cluo set mode every\|freq\|chance` | Trigger mode |
 | `cluo set freq <N>` | In `freq` mode, ask every N prompts |
 | `cluo set chance <0-100>` | In `chance` mode, % probability per prompt |
+| `cluo set scope all\|session` | Default scope for `cluo answer`. `all` = reach every session (no `--all` needed); `session` = this session only (default) |
 | `cluo reset` | Reset the scoreboard (keeps settings) |
 | `cluo ask <answer> [explanation] [question]` · `cluo grade correct\|wrong` · `cluo word <text>` | Called by Claude when posing/grading a question (pending is a queue) |
 
